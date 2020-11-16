@@ -1,0 +1,14 @@
+{
+  "variable": {
+    "userid": "admin",
+    "password": 13456
+  },
+  "images": [
+    "tianmao.png"
+  ],
+  "keywords": [
+    "find_elements_by_id",
+    "getText",
+    "openUrl"
+  ]
+}

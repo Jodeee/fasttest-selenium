@@ -1,0 +1,6 @@
+Taobao_common:
+ description: 淘宝搜索商品
+ input: [mobile_phone]
+ output: []
+ steps:
+    - click('我的淘')

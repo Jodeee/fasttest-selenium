@@ -1,0 +1,13 @@
+testenv: test
+driver: selenium
+browser: Chrome
+desiredcaps:
+    - chrome:
+        - path: 'D:\chromedriver1.exe'
+          other: 'xxx'
+      safari:
+        - path: 'xxx'
+          other: 'xx'
+
+testcase:
+    - testcase/OpenWebView.yaml

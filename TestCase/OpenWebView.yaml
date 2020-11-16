@@ -1,0 +1,12 @@
+module: OpenWebView
+skip: false
+description: 打开淘宝
+steps:
+  - openUrl('www.github.com')
+
+
+
+
+
+
+
