@@ -3,6 +3,8 @@
 import re
 from concurrent import futures
 from fasttest_selenium.common import *
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
 
 class DriverBase(object):
 
@@ -11,287 +13,327 @@ class DriverBase(object):
     def init():
         try:
             global driver
-            if Var.driver.lower() == 'appium':
-                from fasttest_selenium.drivers.appium import AndroidDriver, iOSDriver
-            else:
-                from fasttest_selenium.drivers.macaca import AndroidDriver, iOSDriver
-
-            if Var.platformName.lower() == "ios":
-                driver = iOSDriver
-            elif Var.platformName.lower() == "android":
-                driver = AndroidDriver
-            Var.driver_instance = driver
+            driver = Var.instance
         except Exception as e:
             raise e
 
     @staticmethod
-    def adb_shell(cmd):
-        """onlu Android
-        Args:
-            command
-        Usage:
-            adbshell 'adb devices'
-        Returns:
-            None
-        """
-        driver.adb_shell(cmd)
-
-    @staticmethod
-    def install_app(app_path):
+    def open_url(url):
         '''
-        install app
-        :param app_path:
+        open url
+        :param url:
         :return:
         '''
-        driver.install_app(app_path)
+        driver.get(url)
 
     @staticmethod
-    def uninstall_app(package_info):
+    def close():
         '''
-        uninstall app
-        :param package_info: Android(package) or iOS(bundleId)
+        close
+        :param:
         :return:
         '''
-        driver.uninstall_app(package_info)
+        driver.close()
 
     @staticmethod
-    def launch_app(package_info):
+    def quit():
         '''
-        launch app
-        :param package_info: Android(package/activity) or iOS(bundleId)
+        quit
+        :param:
         :return:
         '''
-        driver.launch_app(package_info)
+        driver.quit()
 
     @staticmethod
-    def close_app(package_info):
+    def back():
         '''
+        back
         close app
-        :param package_info: Android(package) or iOS(bundleId)
+        :param
         :return:
         '''
-        driver.close_app(package_info)
+        driver.back()
+
 
     @staticmethod
-    def background_app():
+    def implicitly_wait(time):
         '''
-        only appium
+        implicitlyWait
+        :param: time
         :return:
         '''
-        driver.background_app()
+        driver.implicitly_wait(float(time))
 
     @staticmethod
-    def tap(x, y):
+    def maximize_window():
         '''
-        :param x:
-        :param y:
+        maxWindow
+        :param:
         :return:
         '''
-        driver.tap(x, y)
+        driver.maximize_window()
 
     @staticmethod
-    def double_tap(x, y):
+    def minimize_window():
         '''
-        :param x:
-        :param y:
+        minWindow
+        :param:
         :return:
         '''
-        driver.double_tap(x, y)
+        driver.minimize_window()
 
     @staticmethod
-    def press(x, y, duration=2):
+    def clear():
         '''
-        :param x:
-        :param y:
-        :param duration:
+        submit
+        :param:
         :return:
         '''
-        driver.press(x, y, duration)
+        driver.clear()
 
     @staticmethod
-    def press(element, duration=2):
+    def delete_all_cookies():
         '''
-        :param element:
-        :param duration:
+        deleteAllCookies
+        :param:
         :return:
         '''
-        driver.press(element, duration)
+        driver.delete_all_cookies()
 
     @staticmethod
-    def swipe_up(duration=2):
+    def delete_cookie(name):
         '''
-        :param duration:
+        deleteCookies
+        :param name
         :return:
         '''
-        driver.swipe_up(duration)
+        driver.delete_cookie(name)
 
     @staticmethod
-    def swipe_down(duration=2):
+    def submit(element):
         '''
-        :param duration:
+        submit
+        :param: element
         :return:
         '''
-        driver.swipe_down(duration)
+        element.submit()
 
     @staticmethod
-    def swipe_left(duration=2):
+    def click(element):
         '''
-        :param duration:
+        click
+        :param: element
         :return:
         '''
-        driver.swipe_left(duration)
-
-    @staticmethod
-    def swipe_right(duration=2):
-        '''
-        :param duration:
-        :return:
-        '''
-        driver.swipe_right(duration)
-
-    @staticmethod
-    def swipe(from_x, from_y, to_x, to_y, duration=2):
-        '''
-        :param from_x:
-        :param from_y:
-        :param to_x:
-        :param to_y:
-        :param duration:
-        :return:
-        '''
-        driver.swipe(from_x, from_y, to_x, to_y, duration)
-
-    @staticmethod
-    def move_to(x, y):
-        '''
-        :param x:
-        :param y:
-        :return:
-        '''
-        driver.move_to(x, y)
-
-    @staticmethod
-    def click(key, timeout=10, interval=1, index=0):
-        '''
-        :param element:
-        :param timeout:
-        :param interval:
-        :param index:
-        :return:
-        '''
-        element = DriverBase.find_elements_by_key(key=key, timeout=timeout, interval=interval, index=index)
-        if not element:
-            raise Exception("Can't find element {}".format(key))
         element.click()
 
-    @staticmethod
-    def check(key, timeout=10, interval=1, index=0):
-        '''
-        :param key:
-        :param timeout:
-        :param interval:
-        :param index:
-        :return:
-        '''
-        element = DriverBase.find_elements_by_key(key=key, timeout=timeout, interval=interval, index=index)
-        if not element:
-            return False
-        return True
 
     @staticmethod
-    def input(key, text='', timeout=10, interval=1, index=0, clear=True):
+    def context_click(element):
         '''
+        contextClick
+        :param: element
+        :return:
+        '''
+        ActionChains(driver).context_click(element).perform()
+
+    @staticmethod
+    def double_click(element):
+        '''
+        doubleClick
+        :param: element
+        :return:
+        '''
+        ActionChains(driver).double_click(element).perform()
+
+    @staticmethod
+    def click_and_hold(element):
+        '''
+        holdClick
+        :param: element
+        :return:
+        '''
+        ActionChains(driver).click_and_hold(element).perform()
+
+    @staticmethod
+    def drag_and_drop(element, target ):
+        '''
+        dragAndDrop
+        :param element:鼠标按下的源元素
+        :param target:鼠标释放的目标元素
+        :return:
+        '''
+        ActionChains(driver).drag_and_drop(element, target).perform()
+
+    @staticmethod
+    def move_to_element(element):
+        '''
+        moveToElement
+        :param element
+        :return:
+        '''
+        ActionChains(driver).move_to_element(element).perform()
+
+    @staticmethod
+    def send_keys(element, text):
+        '''
+        sendKeys
+        :param element:
         :param text:
-        :param timeout:
-        :param interval:
-        :param index:
-        :param clear:
         :return:
         '''
-        element = DriverBase.find_elements_by_key(key=key, timeout=timeout, interval=interval, index=index)
-        if not element:
-            raise Exception("Can't find element {}".format(key))
-        driver.input(element, text)
+        element.send_keys(text)
 
     @staticmethod
-    def get_text(key, timeout=10, interval=1, index=0):
+    def is_selected(element):
         '''
-        :param key:
-        :param timeout:
-        :param interval:
-        :param index:
+        isSelected
+        :param element:
         :return:
         '''
-        element = DriverBase.find_elements_by_key(key=key, timeout=timeout, interval=interval, index=index)
-        if not element:
-            raise Exception("Can't find element {}".format(key))
-        text = driver.get_text(element)
-        return text
+        return element.is_selected()
 
     @staticmethod
-    def find_elements_by_key(key, timeout=10, interval=1, index=0):
+    def is_displayed(element):
         '''
-        :param key:
-        :param timeout:
-        :param interval:
-        :param index:
+        isDisplayed
+        :param element:
         :return:
         '''
-        if not timeout:
-            timeout = 10
-        if not interval:
-            interval = 1
-        dict = {
-            'element': key,
-            'timeout': timeout,
-            'interval': interval,
-            'index': index
-        }
-        if Var.platformName.lower() == 'android':
-            if re.match(r'[a-zA-Z]+\.[a-zA-Z]+[\.\w]+:id/\S+', key):
-                dict['element_type'] = 'id'
-            elif re.match(r'android\.[a-zA-Z]+[\.(a-zA-Z)]+', key) or re.match(r'[a-zA-Z]+\.[a-zA-Z]+[\.(a-zA-Z)]+', key):
-                dict['element_type'] = 'classname'
-            elif re.match('//\*\[@\S+=\S+\]', key) or re.match('//[a-zA-Z]+\.[a-zA-Z]+[\.(a-zA-Z)]+\[\d+\]', key):
-                dict['element_type'] = 'xpath'
-            else:
-                dict['element_type'] = 'name'
-        else:
-            if re.match(r'XCUIElementType', key):
-                dict['element_type'] = 'classname'
-            elif re.match(r'//XCUIElementType', key):
-                dict['element_type'] = 'xpath'
-            elif re.match(r'//\*\[@\S+=\S+\]', key):
-                dict['element_type'] = 'xpath'
-            else:
-                dict['element_type'] = 'name'
-        return DriverBase.wait_for_elements_by_key(dict)
+        return element.is_displayed()
 
     @staticmethod
-    def wait_for_elements_by_key(elements_info):
+    def is_enabled(element):
         '''
-        :param elements_info:
+        isEnabled
+        :param element:
         :return:
         '''
+        return element.is_enabled()
 
-        element_type = elements_info['element_type']
-        element = elements_info['element']
-        timeout = elements_info['timeout']
-        interval = elements_info['interval']
-        index = elements_info['index']
-        log_info("find elements: Body: {'using': '%s', 'value': '%s', 'index': %s}" % (element_type, element, index))
-        if element_type == 'name':
-            elements = driver.wait_for_elements_by_name(name=element, timeout=timeout, interval=interval)
-        elif element_type == 'id':
-            elements = driver.wait_for_elements_by_id(id=element, timeout=timeout, interval=interval)
-        elif element_type == 'xpath':
-            elements = driver.wait_for_elements_by_xpath(xpath=element, timeout=timeout, interval=interval)
-        elif element_type == 'classname':
-            elements = driver.wait_for_elements_by_classname(classname=element, timeout=timeout, interval=interval)
-        else:
-            elements = None
+    @staticmethod
+    def get_size(element):
+        '''
+        getSize
+        :param element:
+        :return:
+        '''
+        return element.size
 
-        log_info('return elements: {}'.format(elements))
+    @staticmethod
+    def get_attribute(element, attribute):
+        '''
+        getAttribute
+        :param element
+        :param attribute
+        :return:
+        '''
+        return element.get_attribute(attribute)
+
+    @staticmethod
+    def get_text(element):
+        '''
+        getText
+        :param element:
+        :return:
+        '''
+        return element.text
+
+    @staticmethod
+    def get_tag_name(element):
+        '''
+        getTagName
+        :param element:
+        :return:
+        '''
+        return element.tag_name
+
+    @staticmethod
+    def get_location(element):
+        '''
+        getLocation
+        :param element:
+        :return:
+        '''
+        return element.location
+
+    @staticmethod
+    def get_name():
+        '''
+        getName
+        :return:
+        '''
+        return driver.name
+
+    @staticmethod
+    def get_title():
+        '''
+        getTitle
+        :return:
+        '''
+        return driver.title
+
+    @staticmethod
+    def get_current_url():
+        '''
+        getCurrentUrl
+        :return:
+        '''
+        return driver.current_url
+
+    @staticmethod
+    def get_cookies():
+        '''
+        getCookies
+        :return:
+        '''
+        return driver.get_cookies()
+
+    @staticmethod
+    def get_cookie(name):
+        '''
+        getCookie
+        :param name
+        :return:
+        '''
+        return driver.get_cookie(name)
+
+    @staticmethod
+    def get_window_position():
+        '''
+        getWindowPosition
+        :return:
+        '''
+        return driver.get_window_position()
+
+    @staticmethod
+    def get_window_size():
+        '''
+        getWindowSize
+        :return:
+        '''
+        return driver.get_window_size()
+
+    # @staticmethod
+    # def get_element(type, text):
+    #     '''
+    #     getElement
+    #     :param type:
+    #     :param text:
+    #     :return:
+    #     '''
+    #     element = driver.find_element(type, text)
+    #     return element
+
+    @staticmethod
+    def get_elements(type, text, index=0):
+        '''
+        getElements
+        :param type:
+        :param text:
+        :return:
+        '''
+        elements = driver.find_elements(type, text)
         if elements:
             if len(elements) <= int(index):
                 log_error('elements exists, but cannot find index({}) position'.format(index), False)

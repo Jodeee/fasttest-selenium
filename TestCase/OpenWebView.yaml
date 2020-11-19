@@ -2,7 +2,35 @@ module: OpenWebView
 skip: false
 description: 打开淘宝
 steps:
-  - openUrl('www.github.com')
+  - openUrl('https://www.baidu.com')
+  - ifcheck('id=su1'):
+      - click('id=su')
+    elifcheck('id=su'):
+      - ${getText} = $.getText('class=hot-refresh-text')
+      - click('class=hot-refresh-text')
+#  - ${isSelected} = $.isSelected('id=su')
+#  - ${isDisplayed} = $.isDisplayed('id=su')
+#  - ${isEnabled} = $.isEnabled('id=su')
+#  - ${getSize} = $.getSize('id=su')
+##  - ${getAttribute} = $.getAttribute('id=su')
+#  - ${getText} = $.getText('id=su')
+#  - ${getTagName} = $.getTagName('id=su')
+#  - ${getLocation} = $.getLocation('id=su')
+#  - ${getName} = $.getName()
+#  - ${getTitle} = $.getTitle()
+#  - ${getCookies} = $.getCookies()
+#  - ${getCookie} = $.getCookie('test')
+#  - ${getWindowPosition} = $.getWindowPosition()
+#  - ${getWindowSize} = $.getWindowSize()
+#  - ${getElement} = $.getElement('id=su')
+#  - maxWindow()
+#  - sleep(3)
+#  - minWindow()
+#  - check('id=su')
+#  - check('id=su',0)
+#  - moveToElement('id=su')
+#  - contextClick('id=su')
+
 
 
 

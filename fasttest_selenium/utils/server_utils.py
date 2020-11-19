@@ -35,6 +35,7 @@ class ServerUtils(object):
                     self.instance = webdriver.Chrome()
             elif self.browser.lower == 'safari':
                 pass
+            return self.instance
         except Exception as e:
             raise e
 

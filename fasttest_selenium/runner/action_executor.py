@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
+import re
 import sys
 import time
 from fasttest_selenium.common import Var, log_info, log_error
@@ -25,257 +26,342 @@ class ActionExecutor(object):
 
         return file_list
 
+    def __get_element_info(self, action, is_return=False):
+        '''
+        :param action:
+        :return:
+        '''
+        parms = action.parms
+        if len(parms):
+            element = None
+            if not re.match(r'[id|name|class|tag_name|link_text|partial_link_text|xpath|css_selector]+=(.*)+', parms[0].strip(), re.I):
+                raise TypeError('input parameter format error:{}'.format(parms[0]))
+            key = parms[0].strip().split('=', 1)[0]
+            text = parms[0].strip().split('=', 1)[-1]
+            if len(parms) == 1:
+                element = DriverBase.get_elements(key, text, 0)
+            elif len(parms) == 2:
+                element = DriverBase.get_elements(key, text, int(parms[1]))
+            else:
+                raise TypeError('takes 2 positional arguments but {} was given'.format(len(parms)))
+            if not element and not is_return:
+                raise Exception("Can't find element: {}={}".format(key, text))
+        else:
+            raise TypeError('missing 1 required positional argument: element')
+        return element
+
     def __action_open_url(self, action):
         """
-        行为执行：openUrl
+        openUrl
         :param action:
         :return:
         """
         parms = action.parms
         if len(parms) == 1:
-            DriverBase.launch_app(parms[0])
+            DriverBase.open_url(parms[0])
         else:
-            raise TypeError('launchApp missing 1 required positional argument: package_info')
+            raise TypeError('openUrl missing 1 required positional argument: url')
 
-    def __action_stop_app(self, action):
+    def __action_close(self):
         """
-        行为执行：stop_app
+        close
         :param action:
         :return:
         """
-        parms = action.parms
-        if parms is None:
-            DriverBase.close_app(Var.package)
-        elif len(parms) == 1:
-            DriverBase.close_app(parms[0])
-        else:
-            raise TypeError('closeApp takes 1 positional argument but {} were giver'.format(len(parms)))
+        DriverBase.close()
 
-    def __action_install_app(self, action):
+    def __action_quit(self):
         """
-        行为执行：install_app
+        行为执行：quit
         :param action:
         :return:
         """
-        if len(action.parms) == 1:
-            DriverBase.install_app(action.parms[0])
-        else:
-            raise TypeError('installApp missing 1 required positional argument: app_path')
+        DriverBase.quit()
 
-    def __action_uninstall_app(self, action):
-        """
-        行为执行：uninstall_app
+    def __action_back(self):
+        '''
+        back
         :param action:
         :return:
-        """
-        if len(action.parms) == 1:
-            DriverBase.uninstall_app(action.parms[0])
-        else:
-            raise TypeError('uninstallApp missing 1 required positional argument: package_info')
+        '''
+        DriverBase.back()
 
-    def __action_adb(self, action):
+    def __action_implicitly_wait(self, action):
         """
-        行为执行：adb
-        :param action:
-        :return:
-        """
-        if len(action.parms) == 1:
-            DriverBase.adb_shell(action.parms[0])
-        else:
-            raise TypeError('adb missing 1 required positional argument')
-
-    def __action_goback(self, action):
-        """
-        行为执行：goback
-        :param action:
-        :return:
-        """
-        DriverBase.adb_shell('shell input keyevent 4')
-
-    def __action_tap(self, action):
-        """
-        行为执行：tap
-        :param action:
-        :return:
-        """
-        if len(action.parms) == 2:
-            DriverBase.tap(float(action.parms[0]), float(action.parms[-1]))
-        else:
-            raise TypeError('tap missing 2 required positional argument: x, y')
-
-    def __action_doubleTap(self, action):
-        """
-        行为执行：doubleTap
-        :param action:
-        :return:
-        """
-        if len(action.parms) == 2:
-            DriverBase.double_tap(float(action.parms[0]), float(action.parms[-1]))
-        else:
-            raise TypeError('doubleTap missing 2 required positional argument: x, y')
-
-    def __action_press(self, action):
-        """
-        行为执行：press
-        :param action:
-        :return:
-        """
-        if len(action.parms) == 2:
-            DriverBase.press(float(action.parms[0]), float(action.parms[-1]))
-        elif len(action.parms) == 3:
-            DriverBase.press(float(action.parms[0]), float(action.parms[1]), float(action.parms[-1]))
-        else:
-            raise TypeError('press missing 2 required positional argument: x, y')
-
-    def __action_swipe(self, action):
-        """
-        行为执行：swipe
-        :param action:
-        :return:
-        """
-        parms = action.parms
-        if parms is None:
-            raise TypeError('swipe missing 4 required positional argument: from_x, from_y, to_x, to_y')
-        if parms[0] == 'up':
-            DriverBase.swipe_up()
-        elif parms[0] == 'down':
-            DriverBase.swipe_down()
-        elif parms[0] == 'left':
-            DriverBase.swipe_left()
-        elif parms[0] == 'right':
-            DriverBase.swipe_right()
-        elif len(parms) == 4:
-            DriverBase.swipe(float(action.parms[0]), float (action.parms[1]), float(action.parms[2]), float(action.parms[3]))
-        elif len(action.parms) == 5:
-            DriverBase.swipe(float(action.parms[0]), float(action.parms[1]), float(action.parms[2]), float(action.parms[3]), int(action.parms[4]))
-        else:
-            raise TypeError('swipe takes 1 positional argument but {} were giver'.format(len(action.action)))
-
-    def __action_getText(self, action):
-        """
-        行为执行：getText
+        行为执行：implicitlyWait
         :param action:
         :return:
         """
         parms = action.parms
         if len(parms) == 1:
-            text = DriverBase.get_text(key=parms[0], timeout=Var.timeout, interval=Var.interval, index=0)
-        elif len(parms) == 2:
-            text = DriverBase.get_text(key=parms[0], timeout=Var.timeout, interval=Var.interval, index=parms[-1])
+            DriverBase.implicitly_wait(parms[0])
         else:
-            raise TypeError('getText missing 1 required positional argument: element')
-        return text
+            raise TypeError('implicitlyWait missing 1 required positional argument: time')
+
+    def __action_maximize_window(self):
+        '''
+        maxWindow
+        :return:
+        '''
+        DriverBase.maximize_window()
+
+    def __action_minimize_window(self):
+        '''
+        minWindow
+        :return:
+        '''
+        DriverBase.minimize_window()
+
+    def __action_clear(self):
+        '''
+        clear
+        :return:
+        '''
+        DriverBase.clear()
+
+    def __action_delete_all_cookies(self):
+        '''
+        deleteAllCookies
+        :return:
+        '''
+        DriverBase.delete_all_cookies()
+
+    def __action_delete_cookie(self, action):
+        '''
+        deleteCookies
+        :return:
+        '''
+        parms = action.parms
+        if len(parms) == 1:
+            DriverBase.delete_cookie(parms[0])
+        else:
+            raise TypeError('deleteCookies missing 1 required positional argument: key')
+
+    def __action_submit(self, action):
+        '''
+        submit
+        :param action:
+        :return:
+        '''
+        element = self.__get_element_info(action)
+        DriverBase.submit(element)
 
     def __action_click(self, action):
-        """
-        行为执行：click
+        '''
+        click
         :param action:
         :return:
-        """
-        parms = action.parms
-        if len(parms):
-            img_info = self.__ocr_analysis(action.action, parms[0], True)
-            if not isinstance(img_info, bool):
-                Var.ocrimg = img_info['ocrimg']
-                x = img_info['x']
-                y = img_info['y']
-                DriverBase.tap(x, y)
-            elif len(parms) == 1:
-                DriverBase.click(key=parms[0], timeout=Var.timeout, interval=Var.interval, index=0)
-            elif len(parms) == 2:
-                DriverBase.click(key=parms[0], timeout=Var.timeout, interval=Var.interval, index=parms[1])
-        else:
-            raise TypeError('click missing 1 required positional argument: element')
+        '''
+        element = self.__get_element_info(action)
+        DriverBase.click(element)
+
+    def __action_context_click(self, action):
+        '''
+        contextClick
+        :param action:
+        :return:
+        '''
+        element = self.__get_element_info(action)
+        DriverBase.context_click(element)
+
+    def __action_double_click(self, action):
+        '''
+        doubleClick
+        :param action:
+        :return:
+        '''
+        element = self.__get_element_info(action)
+        DriverBase.double_click(element)
+
+    def __action_click_and_hold(self, action):
+        '''
+        holdClick
+        :param action:
+        :return:
+        '''
+        element = self.__get_element_info(action)
+        DriverBase.click_and_hold(element)
+
+    def __action_drag_and_drop(self, action):
+        '''
+        dragAndDrop
+        :param action:
+        :return:
+        '''
+        # todo
+        # element = self.__get_element_info(action)
+        # DriverBase.drag_and_drop(element)
+
+    def __action_move_to_element(self, action):
+        '''
+        moveToElement
+        :param action:
+        :return:
+        '''
+        element = self.__get_element_info(action)
+        DriverBase.move_to_element(element)
+
+    def __action_send_keys(self, action):
+        '''
+        sendKeys
+        :param action:
+        :return:
+        '''
+        # todo
+        # element = self.__get_element_info(action)
+        # DriverBase.send_keys(element)
 
     def __action_check(self, action):
-        """
-        行为执行：check
+        '''
+        check
         :param action:
         :return:
-        """
-        parms = action.parms
-        if len(parms):
-            img_info = self.__ocr_analysis(action.action, parms[0], True)
-            if not isinstance(img_info, bool):
-                if img_info is not None:
-                    Var.ocrimg = img_info['ocrimg']
-                    check = True
-                else:
-                    check = False
-            elif len(parms) == 1:
-                check = DriverBase.check(key=parms[0], timeout=Var.timeout, interval=Var.interval, index=0)
-            elif len(parms) == 2:
-                check = DriverBase.check(key=parms[0], timeout=Var.timeout, interval=Var.interval, index=parms[1])
-            else:
-                raise TypeError('check takes 2 positional arguments but {} was given'.format(len(parms)))
+        '''
+        self.__get_element_info(action)
 
-            if not check:
-                raise Exception("Can't find element {}".format(parms[0]))
-            return check
-        else:
-            raise TypeError('click missing 1 required positional argument: element')
-
-    def __action_input(self, action):
-        """
-        行为执行：input
+    def __action_is_selected(self, action):
+        '''
+        isSelected
         :param action:
         :return:
-        """
-        parms = action.parms
-        if len(parms) == 2:
-            DriverBase.input(key=parms[0], text=parms[1], timeout=Var.timeout, interval=Var.interval,
-                             index=0)
-        elif len(parms) == 3:
-            DriverBase.input(key=parms[0], text=parms[1], timeout=Var.timeout, interval=Var.interval,
-                             index=parms[2])
-        else:
-            raise TypeError('input missing 2 required positional argument: element, text')
+        '''
+        element = self.__get_element_info(action)
+        return DriverBase.is_selected(element)
 
+    def __action_is_displayed(self, action):
+        '''
+        isDisplayed
+        :param action:
+        :return:
+        '''
+        element = self.__get_element_info(action)
+        return DriverBase.is_displayed(element)
+
+    def __action_is_enabled(self, action):
+        '''
+        isEnabled
+        :param action:
+        :return:
+        '''
+        element = self.__get_element_info(action)
+        return DriverBase.is_enabled(element)
+
+    def __action_get_size(self, action):
+        '''
+        getSize
+        :param action:
+        :return:
+        '''
+        element = self.__get_element_info(action)
+        return DriverBase.get_size(element)
+
+    def __action_get_attribute(self, action):
+        '''
+        getAttribute
+        :param action:
+        :return:
+        '''
+        # todo
+        # element = self.__get_element_info(action)
+        # return DriverBase.get_attribute(element)
+
+    def __action_get_text(self, action):
+        '''
+        getText
+        :param action:
+        :return:
+        '''
+        element = self.__get_element_info(action)
+        return DriverBase.get_text(element)
+
+    def __action_get_tag_name(self, action):
+        '''
+        getTagName
+        :param action:
+        :return:
+        '''
+        element = self.__get_element_info(action)
+        return DriverBase.get_tag_name(element)
+
+    def __action_get_location(self, action):
+        '''
+        getLocation
+        :param action:
+        :return:
+        '''
+        element = self.__get_element_info(action)
+        return DriverBase.get_location(element)
+
+    def __action_get_name(self):
+        '''
+        getName
+        :param :
+        :return:
+        '''
+        return DriverBase.get_name()
+
+    def __action_get_title(self):
+        '''
+        getTitle
+        :param action:
+        :return:
+        '''
+        return DriverBase.get_title()
+
+    def __action_get_current_url(self):
+        '''
+        getTitle
+        :param :
+        :return:
+        '''
+        return DriverBase.get_current_url()
+
+    def __action_get_cookies(self):
+        '''
+        getCookies
+        :param :
+        :return:
+        '''
+        return DriverBase.get_cookies()
+
+    def __action_get_cookie(self, action):
+        '''
+        getCookie
+        :param :
+        :return:
+        '''
+        parms = action.parms
+        if len(parms) == 1:
+            return DriverBase.get_cookie(parms[0])
+        else:
+            raise TypeError('getCookie missing 1 required positional argument: name')
+
+    def __action_get_window_position(self):
+        '''
+        getWindowPosition
+        :param :
+        :return:
+        '''
+        return DriverBase.get_window_position()
+
+    def __action_get_window_size(self):
+        '''
+        getWindowSize
+        :param :
+        :return:
+        '''
+        return DriverBase.get_window_size()
+    
     def __action_ifcheck(self, action):
         """
         行为执行：ifcheck
         :param action:
         :return:
         """
-        parms = action.parms
-        if len(parms):
-            img_info = self.__ocr_analysis(action.action, parms[0], True)
-            if not isinstance(img_info, bool):
-                if img_info is not None:
-                    Var.ocrimg = img_info['ocrimg']
-                    check = True
-                else:
-                    check = False
-            elif len(parms) == 1:
-                check = DriverBase.check(key=parms[0], timeout=Var.timeout, interval=Var.interval, index=0)
-            elif len(parms) == 2:
-                check = DriverBase.check(key=parms[0], timeout=Var.timeout, interval=Var.interval, index=parms[1])
-            else:
-                raise TypeError('check takes 2 positional arguments but {} was given'.format(len(parms)))
-
-            return check
-        else:
-            raise TypeError('click missing 1 required positional argument: element')
-
-    def __action_ifiOS(self, action):
-        """
-        行为执行：ifiOS
-        :param action:
-        :return:
-        """
-        if Var.platformName.lower() == 'ios':
-            return True
-        return False
-
-    def __action_ifAndroid(self, action):
-        """
-        行为执行：ifAndroid
-        :param action:
-        :return:
-        """
-        if Var.platformName.lower() == 'android':
-            return True
-        return False
+        element = self.__get_element_info(action, is_return=True)
+        if not element:
+            return False
+        return True
 
     def __action_sleep(self, action):
         """
@@ -314,8 +400,38 @@ class ActionExecutor(object):
         '''
         :return:
         '''
-        if action.key == '$.getText':
-            result = self.__action_getText(action)
+        if action.key == '$.isSelected':
+            result = self.__action_is_selected(action)
+        elif action.key == '$.isDisplayed':
+            result = self.__action_is_displayed(action)
+        elif action.key == '$.isEnabled':
+            result = self.__action_is_enabled(action)
+        elif action.key == '$.getText':
+            result = self.__action_get_text(action)
+        elif action.key == '$.getSize':
+            result = self.__action_get_size(action)
+        elif action.key == '$.getAttribute':
+            result = self.__action_get_attribute(action)
+        elif action.key == '$.getText':
+            result = self.__action_get_text(action)
+        elif action.key == '$.getTagName':
+            result = self.__action_get_tag_name(action)
+        elif action.key == '$.getLocation':
+            result = self.__action_get_location(action)
+        elif action.key == '$.getName':
+            result = self.__action_get_name()
+        elif action.key == '$.getTitle':
+            result = self.__action_get_title()
+        elif action.key == '$.getCookies':
+            result = self.__action_get_cookies()
+        elif action.key == '$.getCookie':
+            result = self.__action_get_cookie(action)
+        elif action.key == '$.getWindowPosition':
+            result = self.__action_get_window_position()
+        elif action.key == '$.getWindowSize':
+            result = self.__action_get_window_size()
+        elif action.key == '$.getElement':
+            result = self.__get_element_info(action)
         elif action.key == '$.id':
             result = eval(action.parms)
         elif action.key == '$.getVar':
@@ -335,7 +451,7 @@ class ActionExecutor(object):
         else:
            result = action.parms[0]
 
-        log_info(f'{action.name}: {result}')
+        log_info(f'{action.name}: {type(result)} {result}')
         return result
 
     def __action_setVar(self, action):
@@ -416,53 +532,65 @@ class ActionExecutor(object):
         elif action.tag and action.tag == 'other':
             result = self.__action_other(action)
 
-        elif action.key == 'installApp':
-            result = self.__action_install_app(action)
+        elif action.key == 'openUrl':
+            result = self.__action_open_url(action)
 
-        elif action.key == 'uninstallApp':
-            result = self.__action_uninstall_app(action)
+        elif action.key == 'close':
+            result = self.__action_close()
 
-        elif action.key == 'launchApp':
-            result = self.__action_start_app(action)
+        elif action.key == 'quit':
+            result = self.__action_quit()
 
-        elif action.key == 'closeApp':
-            result = self.__action_stop_app(action)
+        elif action.key == 'implicitlyWait':
+            result = self.__action_implicitly_wait(action)
 
-        elif action.key == 'tap':
-            result = self.__action_tap(action)
+        elif action.key == 'back':
+            result = self.__action_back()
 
-        elif action.key == 'doubleTap':
-            result = self.__action_doubleTap(action)
+        elif action.key == 'maxWindow':
+            result = self.__action_maximize_window()
 
-        elif action.key == 'press':
-            result = self.__action_press(action)
+        elif action.key == 'minWindow':
+            result = self.__action_minimize_window()
 
-        elif action.key == 'goBack':
-            result = self.__action_goback(action)
+        elif action.key == 'deleteAllCookies':
+            result = self.__action_delete_all_cookies()
 
-        elif action.key == 'adb':
-            result = self.__action_adb(action)
+        elif action.key == 'deleteCookies':
+            result = self.__action_delete_cookie()
 
-        elif action.key == 'swipe':
-            result = self.__action_swipe(action)
+        elif action.key == 'clear':
+            result = self.__action_clear()
+
+        elif action.key == 'submit':
+            result = self.__action_submit(action)
 
         elif action.key == 'click':
             result = self.__action_click(action)
 
+        elif action.key == 'contextClick':
+            result = self.__action_context_click(action)
+
+        elif action.key == 'doubleClick':
+            result = self.__action_double_click(action)
+
+        elif action.key == 'holdClick':
+            result = self.__action_click_and_hold(action)
+
+        elif action.key == 'dragAndDrop':
+            result = self.__action_drag_and_drop(action)
+
+        elif action.key == 'moveToElement':
+            result = self.__action_move_to_element(action)
+
+        elif action.key == 'sendKeys':
+            result = self.__action_send_keys(action)
+
         elif action.key == 'check':
             result = self.__action_check(action)
 
-        elif action.key == 'input':
-            result = self.__action_input(action)
-
         elif action.key == 'sleep':
             result = self.__action_sleep(action)
-
-        elif action.key == 'ifiOS':
-            result = self.__action_ifiOS(action)
-
-        elif action.key == 'ifAndroid':
-            result = self.__action_ifAndroid(action)
 
         elif action.key == 'ifcheck':
             result = self.__action_ifcheck(action)

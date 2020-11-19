@@ -145,6 +145,7 @@ class Project(object):
         log_info('******************* analytical desired capabilities *******************')
         server = ServerUtils(Var.browser, Var.browser_config)
         Var.instance = server.start_server()
+        DriverBase.init()
 
         suite = unittest.TestSuite(tuple(self.__suite))
         runner = TestRunner()
