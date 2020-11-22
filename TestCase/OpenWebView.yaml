@@ -3,15 +3,20 @@ skip: false
 description: 打开淘宝
 steps:
   - openUrl('https://www.baidu.com')
-  - ifcheck('id=su1'):
-      - click('id=su')
-    elifcheck('id=su'):
-      - ${getText} = $.getText('class=hot-refresh-text')
-      - click('class=hot-refresh-text')
+#  - ifcheck('id=su1'):
+#      - click('id=su')
+#    elifcheck('id=su'):
+#      - ${getText} = $.getText('class=hot-refresh-text')
+#      - click('class=hot-refresh-text')
 #  - ${isSelected} = $.isSelected('id=su')
 #  - ${isDisplayed} = $.isDisplayed('id=su')
 #  - ${isEnabled} = $.isEnabled('id=su')
 #  - ${getSize} = $.getSize('id=su')
+#  - ${height} = ${getSize}["height"]
+#  - ${widht}=${getSize}[width]
+#  - ${list} = ['1',2,"3",True,{'key':"123"}]
+#  - ${list5} = ${list}[4]
+#  - ${key} = ${list5}['key']
 ##  - ${getAttribute} = $.getAttribute('id=su')
 #  - ${getText} = $.getText('id=su')
 #  - ${getTagName} = $.getTagName('id=su')

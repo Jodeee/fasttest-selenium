@@ -113,12 +113,29 @@ class ActionAnalysis(object):
             param = param.strip('"')
         elif re.search(r'(^\${\w+}?$)', param):
             param = self.__get_variables(param)
-        else:
+        elif re.search(r'(^\${\w+}?\[.+\]$)', param):
+            index = param.index('}[')
+            param_value = self.__get_variables(param[:index+1])
+            key = self.__get_eval(param[index + 2:-1])
             try:
-                param = eval(param)
-            except:
-                param = param
+                param = param_value[key]
+            except Exception as e:
+                raise e
+        else:
+            param = self.__get_eval(param)
         return param
+
+    def __get_eval(self, str):
+        '''
+        :param parms:
+        :return:
+        '''
+        try:
+            str = eval(str)
+        except:
+            str = str
+
+        return str
 
     def __get_parms(self, parms):
         '''

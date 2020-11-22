@@ -86,6 +86,22 @@ class ActionExecutor(object):
         '''
         DriverBase.back()
 
+    def __action_forward(self):
+        '''
+        forward
+        :param action:
+        :return:
+        '''
+        DriverBase.forward()
+
+    def __action_refresh(self):
+        '''
+        refresh
+        :param action:
+        :return:
+        '''
+        DriverBase.refresh()
+
     def __action_implicitly_wait(self, action):
         """
         行为执行：implicitlyWait
@@ -185,13 +201,35 @@ class ActionExecutor(object):
 
     def __action_drag_and_drop(self, action):
         '''
-        dragAndDrop
+        dragDrop
         :param action:
         :return:
         '''
         # todo
         # element = self.__get_element_info(action)
-        # DriverBase.drag_and_drop(element)
+        DriverBase.drag_and_drop(element, target)
+
+    def __action_drag_and_drop_by_offset(self, action):
+        '''
+        dragDropByOffset
+        :param action:
+        :return:
+        '''
+        # todo
+        # element = self.__get_element_info(action)
+        DriverBase.drag_and_drop_by_offse(element, xoffset, yoffset)
+
+    def __action_move_by_offset(self, action):
+        '''
+        moveByOffset
+        :param action:
+        :return:
+        '''
+        parms = action.parms
+        if len(parms) == 2:
+            DriverBase.move_by_offset(parms[0], parms[1])
+        else:
+            raise TypeError('moveByOffset missing 2 required positional argument: xoffset, yoffse')
 
     def __action_move_to_element(self, action):
         '''
@@ -202,6 +240,65 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         DriverBase.move_to_element(element)
 
+    def __action_move_to_element_with_offset(self, action):
+        '''
+        moveToElementWithOffset
+        :param action:
+        :return:
+        '''
+        # todo
+        # element = self.__get_element_info(action)
+        DriverBase.move_to_element_with_offset(element, xoffset, yoffset)
+
+    def __action_key_down(self, action):
+        '''
+        keyDown
+        :param action:
+        :return:
+        '''
+        # todo
+        # element = self.__get_element_info(action)
+        DriverBase.key_down(element)
+
+    def __action_key_Up(self, action):
+        '''
+        keyUp
+        :param action:
+        :return:
+        '''
+        # todo
+        # element = self.__get_element_info(action)
+        DriverBase.key_up(element)
+
+    def __action_switch_to_frame(self, action):
+        '''
+        switchToFrame
+        :param action:
+        :return:
+        '''
+        parms = action.parms
+        if len(parms) == 1:
+            DriverBase.switch_to_frame(parms[0])
+        else:
+            raise TypeError('switchToFrame missing 1 required positional argument: id or name')
+
+
+    def __action_switch_to_default_content(self):
+        '''
+        switchToDefaultContent
+        :param action:
+        :return:
+        '''
+        DriverBase.switch_to_default_content()
+
+    def __action_switch_to_Parent_frame(self):
+        '''
+        switchToParentFrame
+        :param action:
+        :return:
+        '''
+        DriverBase.switch_to_Parent_fram()
+
     def __action_send_keys(self, action):
         '''
         sendKeys
@@ -210,7 +307,7 @@ class ActionExecutor(object):
         '''
         # todo
         # element = self.__get_element_info(action)
-        # DriverBase.send_keys(element)
+        DriverBase.send_keys(element)
 
     def __action_check(self, action):
         '''
@@ -264,7 +361,7 @@ class ActionExecutor(object):
         '''
         # todo
         # element = self.__get_element_info(action)
-        # return DriverBase.get_attribute(element)
+        return DriverBase.get_attribute(element, attribute)
 
     def __action_get_text(self, action):
         '''
@@ -423,6 +520,8 @@ class ActionExecutor(object):
             result = self.__action_get_name()
         elif action.key == '$.getTitle':
             result = self.__action_get_title()
+        elif action.key == '$.getCurrentUrl':
+            result = self.__action_get_current_url()
         elif action.key == '$.getCookies':
             result = self.__action_get_cookies()
         elif action.key == '$.getCookie':
@@ -548,6 +647,12 @@ class ActionExecutor(object):
         elif action.key == 'back':
             result = self.__action_back()
 
+        elif action.key == 'forward':
+            result = self.__action_forward()
+
+        elif action.key == 'refresh':
+            result = self.__action_refresh()
+
         elif action.key == 'maxWindow':
             result = self.__action_maximize_window()
 
@@ -578,11 +683,35 @@ class ActionExecutor(object):
         elif action.key == 'holdClick':
             result = self.__action_click_and_hold(action)
 
-        elif action.key == 'dragAndDrop':
+        elif action.key == 'dragDrop':
             result = self.__action_drag_and_drop(action)
+
+        elif action.key == 'dragDropByOffset':
+            result = self.__action_drag_and_drop_by_offset(action)
+
+        elif action.key == 'moveByOffset':
+            result = self.__action_move_by_offset(action)
 
         elif action.key == 'moveToElement':
             result = self.__action_move_to_element(action)
+
+        elif action.key == 'moveToElementWithOffset':
+            result = self.__action_move_to_element_with_offset(action)
+
+        elif action.key == 'keyDown':
+            result = self.__action_key_down(action)
+
+        elif action.key == 'keyUp':
+            result = self.__action_key_Up(action)
+
+        elif action.key == 'switchToFrame':
+            result = self.__action_switch_to_frame(action)
+
+        elif action.key == 'switchToDefaultContent':
+            result = self.__action_switch_to_default_content()
+
+        elif action.key == 'switchToParentFrame':
+            result = self.__action_switch_to_Parent_frame()
 
         elif action.key == 'sendKeys':
             result = self.__action_send_keys(action)

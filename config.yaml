@@ -3,7 +3,7 @@ driver: selenium
 browser: Chrome
 desiredcaps:
     - chrome:
-        - path: 'D:\chromedriver1.exe'
+        - path: '/Users/xiongjunjie/Downloads/chromedriver'
           other: 'xxx'
       safari:
         - path: 'xxx'

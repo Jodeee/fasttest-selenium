@@ -4,6 +4,7 @@ import re
 from concurrent import futures
 from fasttest_selenium.common import *
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
 class DriverBase(object):
@@ -48,11 +49,28 @@ class DriverBase(object):
     def back():
         '''
         back
-        close app
         :param
         :return:
         '''
         driver.back()
+
+    @staticmethod
+    def forward():
+        '''
+        forward
+        :param
+        :return:
+        '''
+        driver.forward()
+
+    @staticmethod
+    def refresh():
+        '''
+        refresh
+        :param
+        :return:
+        '''
+        driver.refresh()
 
 
     @staticmethod
@@ -156,7 +174,7 @@ class DriverBase(object):
         ActionChains(driver).click_and_hold(element).perform()
 
     @staticmethod
-    def drag_and_drop(element, target ):
+    def drag_and_drop(element, target):
         '''
         dragAndDrop
         :param element:鼠标按下的源元素
@@ -166,6 +184,27 @@ class DriverBase(object):
         ActionChains(driver).drag_and_drop(element, target).perform()
 
     @staticmethod
+    def drag_and_drop_by_offse(element, xoffset, yoffset):
+        '''
+        dragDropByOffset
+        :param element:
+        :param xoffset:
+        :param yoffset:
+        :return:
+        '''
+        ActionChains(driver).drag_and_drop_by_offset(element, xoffset, yoffset).perform()
+
+    @staticmethod
+    def move_by_offset(xoffset, yoffset):
+        '''
+        moveByOffset
+        :param xoffset:
+        :param yoffset:
+        :return:
+        '''
+        ActionChains(driver).move_by_offset(xoffset, yoffset).perform()
+
+    @staticmethod
     def move_to_element(element):
         '''
         moveToElement
@@ -173,6 +212,62 @@ class DriverBase(object):
         :return:
         '''
         ActionChains(driver).move_to_element(element).perform()
+
+    @staticmethod
+    def move_to_element_with_offset(element, xoffset, yoffset):
+        '''
+        moveToElementWithOffset
+        :param element
+        :param xoffset:
+        :param yoffset:
+        :return:
+        '''
+        ActionChains(driver).move_to_element_with_offset(element, xoffset, yoffset).perform()
+
+    @staticmethod
+    def key_down(element, value):
+        '''
+        keyDown
+        :param element
+        :param value:
+        :return:
+        '''
+        ActionChains(driver).key_down(value, element).perform()
+
+    @staticmethod
+    def key_up(element, value):
+        '''
+        keyUp
+        :param element
+        :param value:
+        :return:
+        '''
+        ActionChains(driver).key_up(value, element).perform()
+
+    @staticmethod
+    def switch_to_frame(frame_reference):
+        '''
+        switchToFrame
+        :param frame_reference:
+        :return:
+        '''
+        driver.switch_to.frame(frame_reference)
+
+    @staticmethod
+    def switch_to_default_content():
+        '''
+        switchToDefaultContent
+        :return:
+        '''
+        driver.switch_to.default_content()
+
+    @staticmethod
+    def switch_to_Parent_fram():
+        '''
+        switchToParentFrame
+        :return:
+        '''
+        driver.switch_to.parent_frame()
 
     @staticmethod
     def send_keys(element, text):
