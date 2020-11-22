@@ -58,7 +58,7 @@ def keywords(func, *args, **kwds):
 
                 if result is not None:
                     # if while 等需要把结果放在语句后面
-                    result_step = '{}|:|{}|:|{}s|:|{}|:|{}: {}\n'.format(snapshot_index, result_exception_flag, duration,
+                    result_step = '{}|:|{}|:|{}s|:|{}|:|{}: --> {}\n'.format(snapshot_index, result_exception_flag, duration,
                                                                      imagename, f'{style}- {action_step}', result)
                 else:
                     result_step = '{}|:|{}|:|{}s|:|{}|:|{}\n'.format(snapshot_index, result_exception_flag, duration,

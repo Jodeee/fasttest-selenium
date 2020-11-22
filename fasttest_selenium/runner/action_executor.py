@@ -112,13 +112,6 @@ class ActionExecutor(object):
         '''
         DriverBase.minimize_window()
 
-    def __action_clear(self):
-        '''
-        clear
-        :return:
-        '''
-        DriverBase.clear()
-
     def __action_delete_all_cookies(self):
         '''
         deleteAllCookies
@@ -136,6 +129,14 @@ class ActionExecutor(object):
             DriverBase.delete_cookie(parms[0])
         else:
             raise TypeError('deleteCookies missing 1 required positional argument: key')
+
+    def __action_clear(self, action):
+        '''
+        clear
+        :return:
+        '''
+        element = self.__get_element_info(action)
+        DriverBase.clear(element)
 
     def __action_submit(self, action):
         '''

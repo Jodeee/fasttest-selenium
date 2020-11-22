@@ -83,15 +83,6 @@ class DriverBase(object):
         driver.minimize_window()
 
     @staticmethod
-    def clear():
-        '''
-        submit
-        :param:
-        :return:
-        '''
-        driver.clear()
-
-    @staticmethod
     def delete_all_cookies():
         '''
         deleteAllCookies
@@ -117,6 +108,15 @@ class DriverBase(object):
         :return:
         '''
         element.submit()
+
+    @staticmethod
+    def clear(element):
+        '''
+        element
+        :param:
+        :return:
+        '''
+        element.clear()
 
     @staticmethod
     def click(element):
@@ -333,7 +333,18 @@ class DriverBase(object):
         :param text:
         :return:
         '''
-        elements = driver.find_elements(type, text)
+        type = type.lower()
+        by = Dict({
+            'id': By.ID,
+            'name': By.NAME,
+            'xpath': By.XPATH,
+            'class': By.CLASS_NAME,
+            'tag_name': By.TAG_NAME,
+            'link_text': By.LINK_TEXT,
+            'css_selector': By.CSS_SELECTOR,
+            'partial_link_text': By.PARTIAL_LINK_TEXT,
+        })
+        elements = driver.find_elements(by[type], text)
         if elements:
             if len(elements) <= int(index):
                 log_error('elements exists, but cannot find index({}) position'.format(index), False)
