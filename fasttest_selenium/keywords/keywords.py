@@ -48,6 +48,7 @@ def return_keywords():
         "$.getWindowPosition",  # 获取窗口坐标
         "$.getWindowSize",  # 获取窗口大小
         "$.getElement",  # 获取元素
+        "$.getElements",  # 获取元素
         "$.id",  # 科学运算
         "$.getVar",  # 获取全局变量
         "$.setVar",  # 设置全局变量

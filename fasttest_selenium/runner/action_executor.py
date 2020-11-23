@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import time
+from selenium.webdriver.remote.webelement import WebElement
 from fasttest_selenium.common import Var, log_info, log_error
 from fasttest_selenium.drivers.driver_base import DriverBase
 from fasttest_selenium.utils.opcv_utils import OpencvUtils
@@ -26,29 +27,41 @@ class ActionExecutor(object):
 
         return file_list
 
-    def __get_element_info(self, action, is_return=False):
+    def __get_element_info(self, action, index=0, is_return=False):
         '''
         :param action:
         :return:
         '''
         parms = action.parms
-        if len(parms):
-            element = None
-            if not re.match(r'[id|name|class|tag_name|link_text|partial_link_text|xpath|css_selector]+=(.*)+', parms[0].strip(), re.I):
-                raise TypeError('input parameter format error:{}'.format(parms[0]))
-            key = parms[0].strip().split('=', 1)[0]
-            text = parms[0].strip().split('=', 1)[-1]
-            if len(parms) == 1:
-                element = DriverBase.get_elements(key, text, 0)
-            elif len(parms) == 2:
-                element = DriverBase.get_elements(key, text, int(parms[1]))
-            else:
-                raise TypeError('takes 2 positional arguments but {} was given'.format(len(parms)))
-            if not element and not is_return:
-                raise Exception("Can't find element: {}={}".format(key, text))
+        if len(parms) <= index or not len(parms):
+            raise TypeError('missing {} required positional argument'.format(index + 1))
+        if isinstance(parms[index], WebElement):
+            element = parms[index]
+        elif isinstance(parms[index], str):
+            if not re.match(r'id|name|class|tag_name|link_text|partial_link_text|xpath|css_selector\s*=.+', parms[index].strip(), re.I):
+                raise TypeError('input parameter format error:{}'.format(parms[index]))
+            key = parms[index].split('=', 1)[0].strip()
+            value = parms[index].split('=', 1)[-1].strip()
+            element = DriverBase.get_element(key, value)
         else:
-            raise TypeError('missing 1 required positional argument: element')
+            raise TypeError('the parms type must be: WebElement or str')
+
+        if not element and not is_return:
+            raise Exception("Can't find element: {}".format(parms[index]))
         return element
+
+
+    def __get_value(self, action, index=0):
+        '''
+        :param action:
+        :return:
+        '''
+        parms = action.parms
+        if len(parms) <= index or not len(parms):
+            raise TypeError('missing {} required positional argument'.format(index + 1))
+
+        value = parms[index].strip()
+        return value
 
     def __action_open_url(self, action):
         """
@@ -56,11 +69,8 @@ class ActionExecutor(object):
         :param action:
         :return:
         """
-        parms = action.parms
-        if len(parms) == 1:
-            DriverBase.open_url(parms[0])
-        else:
-            raise TypeError('openUrl missing 1 required positional argument: url')
+        url = self.__get_value(action)
+        DriverBase.open_url(url)
 
     def __action_close(self):
         """
@@ -108,11 +118,8 @@ class ActionExecutor(object):
         :param action:
         :return:
         """
-        parms = action.parms
-        if len(parms) == 1:
-            DriverBase.implicitly_wait(parms[0])
-        else:
-            raise TypeError('implicitlyWait missing 1 required positional argument: time')
+        time = self.__get_value(action)
+        DriverBase.implicitly_wait(float(time))
 
     def __action_maximize_window(self):
         '''
@@ -140,11 +147,8 @@ class ActionExecutor(object):
         deleteCookies
         :return:
         '''
-        parms = action.parms
-        if len(parms) == 1:
-            DriverBase.delete_cookie(parms[0])
-        else:
-            raise TypeError('deleteCookies missing 1 required positional argument: key')
+        key = self.__get_value(action)
+        DriverBase.delete_cookie(key)
 
     def __action_clear(self, action):
         '''
@@ -205,8 +209,8 @@ class ActionExecutor(object):
         :param action:
         :return:
         '''
-        # todo
-        # element = self.__get_element_info(action)
+        element = self.__get_element_info(action, 0)
+        target = self.__get_element_info(action, 1)
         DriverBase.drag_and_drop(element, target)
 
     def __action_drag_and_drop_by_offset(self, action):
@@ -215,9 +219,10 @@ class ActionExecutor(object):
         :param action:
         :return:
         '''
-        # todo
-        # element = self.__get_element_info(action)
-        DriverBase.drag_and_drop_by_offse(element, xoffset, yoffset)
+        element = self.__get_element_info(action)
+        xoffset = self.__get_value(action, 1)
+        yoffset = self.__get_value(action, 2)
+        DriverBase.drag_and_drop_by_offse(element, float(xoffset), float(yoffset))
 
     def __action_move_by_offset(self, action):
         '''
@@ -225,11 +230,9 @@ class ActionExecutor(object):
         :param action:
         :return:
         '''
-        parms = action.parms
-        if len(parms) == 2:
-            DriverBase.move_by_offset(parms[0], parms[1])
-        else:
-            raise TypeError('moveByOffset missing 2 required positional argument: xoffset, yoffse')
+        xoffset = self.__get_value(action, 0)
+        yoffset = self.__get_value(action, 1)
+        DriverBase.move_by_offset(float(xoffset), float(yoffset))
 
     def __action_move_to_element(self, action):
         '''
@@ -246,9 +249,10 @@ class ActionExecutor(object):
         :param action:
         :return:
         '''
-        # todo
-        # element = self.__get_element_info(action)
-        DriverBase.move_to_element_with_offset(element, xoffset, yoffset)
+        element = self.__get_element_info(action)
+        xoffset = self.__get_value(action, 1)
+        yoffset = self.__get_value(action, 2)
+        DriverBase.move_to_element_with_offset(element, float(xoffset), float(yoffset))
 
     def __action_key_down(self, action):
         '''
@@ -276,12 +280,8 @@ class ActionExecutor(object):
         :param action:
         :return:
         '''
-        parms = action.parms
-        if len(parms) == 1:
-            DriverBase.switch_to_frame(parms[0])
-        else:
-            raise TypeError('switchToFrame missing 1 required positional argument: id or name')
-
+        frame_reference = self.__get_value(action, 2)
+        DriverBase.switch_to_frame(frame_reference)
 
     def __action_switch_to_default_content(self):
         '''
@@ -359,8 +359,8 @@ class ActionExecutor(object):
         :param action:
         :return:
         '''
-        # todo
-        # element = self.__get_element_info(action)
+        element = self.__get_element_info(action)
+        attribute = self.__get_value(action, 1)
         return DriverBase.get_attribute(element, attribute)
 
     def __action_get_text(self, action):
@@ -428,11 +428,8 @@ class ActionExecutor(object):
         :param :
         :return:
         '''
-        parms = action.parms
-        if len(parms) == 1:
-            return DriverBase.get_cookie(parms[0])
-        else:
-            raise TypeError('getCookie missing 1 required positional argument: name')
+        key = self.__get_value(action)
+        DriverBase.get_cookie(key)
 
     def __action_get_window_position(self):
         '''
@@ -449,7 +446,23 @@ class ActionExecutor(object):
         :return:
         '''
         return DriverBase.get_window_size()
-    
+
+    def __action_get_elements(self, action):
+        '''
+        :param action:
+        :return:
+        '''
+        parms = action.parms
+        if not len(parms):
+            raise TypeError('missing 1 required positional argument')
+        if not re.match(r'[id|name|class|tag_name|link_text|partial_link_text|xpath|css_selector]+=(.*)+',
+                        parms[0].strip(), re.I):
+            raise TypeError('input parameter format error:{}'.format(parms[0]))
+        key = parms[0].strip().split('=', 1)[0]
+        value = parms[0].strip().split('=', 1)[-1]
+        elements = DriverBase.get_elements(key, value)
+        return elements
+
     def __action_ifcheck(self, action):
         """
         行为执行：ifcheck
@@ -467,11 +480,8 @@ class ActionExecutor(object):
         :param action:
         :return:
         """
-        parms = action.parms
-        if parms is None:
-            raise TypeError('sleep missing 1 required positional argument')
-        elif len(parms) == 1:
-            time.sleep(float(parms[0]))
+        sleep = self.__get_value(action)
+        time.sleep(float(sleep))
 
     def __ocr_analysis(self, action, element, israise):
         """
@@ -532,6 +542,8 @@ class ActionExecutor(object):
             result = self.__action_get_window_size()
         elif action.key == '$.getElement':
             result = self.__get_element_info(action)
+        elif action.key == '$.getElements':
+            result = self.__action_get_elements(action)
         elif action.key == '$.id':
             result = eval(action.parms)
         elif action.key == '$.getVar':

@@ -6,6 +6,7 @@ from fasttest_selenium.common import *
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import NoSuchElementException
 
 class DriverBase(object):
 
@@ -409,19 +410,35 @@ class DriverBase(object):
         '''
         return driver.get_window_size()
 
-    # @staticmethod
-    # def get_element(type, text):
-    #     '''
-    #     getElement
-    #     :param type:
-    #     :param text:
-    #     :return:
-    #     '''
-    #     element = driver.find_element(type, text)
-    #     return element
+    @staticmethod
+    def get_element(type, text):
+        '''
+        getElement
+        :param type:
+        :param text:
+        :return:
+        '''
+        type = type.lower()
+        by = Dict({
+            'id': By.ID,
+            'name': By.NAME,
+            'xpath': By.XPATH,
+            'class': By.CLASS_NAME,
+            'tag_name': By.TAG_NAME,
+            'link_text': By.LINK_TEXT,
+            'css_selector': By.CSS_SELECTOR,
+            'partial_link_text': By.PARTIAL_LINK_TEXT,
+        })
+        try:
+            element = driver.find_element(by[type], text)
+            return element
+        except NoSuchElementException:
+            return None
+        except Exception as e:
+            raise e
 
     @staticmethod
-    def get_elements(type, text, index=0):
+    def get_elements(type, text):
         '''
         getElements
         :param type:
@@ -440,9 +457,4 @@ class DriverBase(object):
             'partial_link_text': By.PARTIAL_LINK_TEXT,
         })
         elements = driver.find_elements(by[type], text)
-        if elements:
-            if len(elements) <= int(index):
-                log_error('elements exists, but cannot find index({}) position'.format(index), False)
-                raise Exception('list index out of range, index:{}'.format(index))
-            return elements[index]
-        return None
+        return elements
