@@ -20,8 +20,7 @@ def return_keywords():
         "moveByOffset", # 鼠标从当前位置移动到某个坐标
         "moveToElement",  # 鼠标移动
         "moveToElementWithOffset", #移动到距某个元素(左上角坐标)多少距离的位置
-        "keyDown", # 按下某个键盘上的键
-        "keyUp", # 松开某个键
+        "keyDownAndkeyUp", # 按下某个键盘上的键
         "sendKeys",  # 输入
         "clear",  # 清除
         "maxWindow",  # 窗口最大化

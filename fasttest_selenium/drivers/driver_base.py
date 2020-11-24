@@ -226,14 +226,29 @@ class DriverBase(object):
         ActionChains(driver).move_to_element_with_offset(element, xoffset, yoffset).perform()
 
     @staticmethod
-    def key_down(element, value):
+    def key_down_and_key_up(value):
         '''
-        keyDown
+        keyDownAndkeyUp
         :param element
         :param value:
         :return:
         '''
-        ActionChains(driver).key_down(value, element).perform()
+        try:
+            action = 'ActionChains(driver)'
+            for k, v in value.items():
+                if k.lower() == 'keydown':
+                    for k_down in v:
+                        action = '{}.key_down({})'.format(action, k_down)
+                elif k.lower() == 'sendkeys':
+                    action = '{}.send_keys("{}")'.format(action, v)
+                elif k.lower() == 'keyup':
+                    for k_up in v:
+                        action = '{}.key_up({})'.format(action, k_up)
+            action = '{}.perform()'.format(action)
+            log_info(action)
+            eval(action)
+        except Exception as e:
+            raise e
 
     @staticmethod
     def key_up(element, value):

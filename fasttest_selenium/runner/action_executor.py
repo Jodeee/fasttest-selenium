@@ -60,7 +60,7 @@ class ActionExecutor(object):
         if len(parms) <= index or not len(parms):
             raise TypeError('missing {} required positional argument'.format(index + 1))
 
-        value = parms[index].strip()
+        value = parms[index]
         return value
 
     def __action_open_url(self, action):
@@ -254,25 +254,18 @@ class ActionExecutor(object):
         yoffset = self.__get_value(action, 2)
         DriverBase.move_to_element_with_offset(element, float(xoffset), float(yoffset))
 
-    def __action_key_down(self, action):
+    def __action_key_down_and_key_up(self, action):
         '''
         keyDown
         :param action:
         :return:
         '''
-        # todo
-        # element = self.__get_element_info(action)
-        DriverBase.key_down(element)
-
-    def __action_key_Up(self, action):
-        '''
-        keyUp
-        :param action:
-        :return:
-        '''
-        # todo
-        # element = self.__get_element_info(action)
-        DriverBase.key_up(element)
+        parms = self.__get_value(action, 0)
+        if isinstance(parms, str):
+            parms = eval(parms)
+        if not isinstance(parms, dict):
+            raise TypeError('the parms type must be: dict')
+        DriverBase.key_down_and_key_up(parms)
 
     def __action_switch_to_frame(self, action):
         '''
@@ -710,11 +703,8 @@ class ActionExecutor(object):
         elif action.key == 'moveToElementWithOffset':
             result = self.__action_move_to_element_with_offset(action)
 
-        elif action.key == 'keyDown':
-            result = self.__action_key_down(action)
-
-        elif action.key == 'keyUp':
-            result = self.__action_key_Up(action)
+        elif action.key == 'keyDownAndkeyUp':
+            result = self.__action_key_down_and_key_up(action)
 
         elif action.key == 'switchToFrame':
             result = self.__action_switch_to_frame(action)
