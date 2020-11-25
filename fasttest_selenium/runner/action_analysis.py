@@ -156,20 +156,6 @@ class ActionAnalysis(object):
         else:
             raise SyntaxError(parms)
 
-    def __get_parm(self, content):
-        '''
-        获取参数,传参非（）形式
-        :param params_str:
-        :return:
-        '''
-        pattern_content = re.compile(r'(\'.*?\'|".*?"|\S+)')
-        content_split = re.findall(pattern_content, content)
-        contents = []
-        for c in content_split:
-            var_content = self.__get_params_type(c)
-            contents.append(var_content)
-        return contents
-
     def __analysis_exist_parms_keywords(self, step):
         key = step.split('(', 1)[0].strip()
         parms = self.__get_parms(step.lstrip(key))
@@ -225,8 +211,7 @@ class ActionAnalysis(object):
             parms = self.__get_replace_string(var_value.split(key, 1)[-1][1:-1])
         else:
             key = None
-            parms = self.__get_parm(var_value)
-
+            parms = [self.__get_params_type(var_value)]
         action_data = Dict({
             'key': key,
             'parms': parms,

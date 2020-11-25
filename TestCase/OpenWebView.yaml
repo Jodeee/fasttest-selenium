@@ -2,7 +2,25 @@ module: OpenWebView
 skip: false
 description: 打开淘宝
 steps:
-  - openUrl('https://www.baidu.com')
+#  - openUrl('https://www.baidu.com')
+#  - sleep(3)
+#  - ${t1} = 1
+#  - ${t2} = '2'
+#  - ${t3} = sdj
+#  - ${t4} = 'sdj'
+#  - ${t5} = "sdj"
+#  - ${t6} = True
+#  - ${t7} = None
+#  - ${t8} = 'False'
+#  - ${t9} = [1,2,'3',"4",True,None,'False',{'key':"1"},[1,2,'3',"4",True,None,'False']]
+#  - ${t10} = ${t9}[7]
+#  - ${t11} = ${t10}['key']
+#  - ${baidus} = {'keyDown':['Keys.COMMAND'],'sendKeys':1,'keyUp':['Keys.COMMAND']}
+#  - keyDownAndkeyUp(${baidus})
+#  - sleep(3)
+#  - ${list} = [1,'v',True,None,'False']
+#  - sendKeys('name=wd', )
+#  - sleep(3)
 #  - ifcheck('id=su1'):
 #      - click('id=su')
 #    elifcheck('id=su'):

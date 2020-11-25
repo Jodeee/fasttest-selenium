@@ -300,7 +300,8 @@ class ActionExecutor(object):
         '''
         # todo
         # element = self.__get_element_info(action)
-        DriverBase.send_keys(element)
+        # text = self.__get_value(action, 1)
+        DriverBase.send_keys(element, text)
 
     def __action_check(self, action):
         '''
