@@ -261,10 +261,6 @@ class ActionExecutor(object):
         :return:
         '''
         parms = self.__get_value(action, 0)
-        if isinstance(parms, str):
-            parms = eval(parms)
-        if not isinstance(parms, dict):
-            raise TypeError('the parms type must be: dict')
         DriverBase.key_down_and_key_up(parms)
 
     def __action_switch_to_frame(self, action):
@@ -298,9 +294,8 @@ class ActionExecutor(object):
         :param action:
         :return:
         '''
-        # todo
-        # element = self.__get_element_info(action)
-        # text = self.__get_value(action, 1)
+        element = self.__get_element_info(action)
+        text = self.__get_value(action, 1)
         DriverBase.send_keys(element, text)
 
     def __action_check(self, action):
@@ -669,10 +664,10 @@ class ActionExecutor(object):
             result = self.__action_delete_all_cookies()
 
         elif action.key == 'deleteCookies':
-            result = self.__action_delete_cookie()
+            result = self.__action_delete_cookie(action)
 
         elif action.key == 'clear':
-            result = self.__action_clear()
+            result = self.__action_clear(action)
 
         elif action.key == 'submit':
             result = self.__action_submit(action)

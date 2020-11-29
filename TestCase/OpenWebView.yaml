@@ -7,26 +7,34 @@ steps:
 #  - ${t1} = 1
 #  - ${t2} = '2'
 #  - ${t3} = sdj
-#  - ${t4} = 'sdj'
 #  - ${t5} = "sdj"
-#  - ${t6} = True
+  - ${t6} = True
 #  - ${t7} = None
-#  - ${t8} = 'False'
-#  - ${t9} = [1,2,'3',"4",True,None,'False',{'key':"1"},[1,2,'3',"4",True,None,'False']]
+#  - ${t8} = [1,2,3]
+#  - ${t9} = {'Key':'1'}
+#  - ${t10} = ${t8}[0]
+#  - ${t11} = ${t9}['Key']
+#  - ${t11} = []
+#  - ${12} = [1,${t1},'test','test1',"test test1'2",[1,2,"list text , skskk",${t5}], {"key":1,'key1':[1,2,"list text , skskk"]},"测试,字符串,测试"]
+#  - ${t9} = '[1,2,'3',"4",True,None,'False',{'key':"1"},[1,2,'3',"4",True,None,'False']]'
 #  - ${t10} = ${t9}[7]
 #  - ${t11} = ${t10}['key']
-#  - ${baidus} = {'keyDown':['Keys.COMMAND'],'sendKeys':1,'keyUp':['Keys.COMMAND']}
-#  - keyDownAndkeyUp(${baidus})
+  - ${baidus} = {'keyDown':['Keys.COMMAND'],'sendKeys':'x','keyUp':['Keys.COMMAND']}
+  - keyDownAndkeyUp(1,2,{'keyDown':['Keys.COMMAND'],'sendKeys':'x','keyUp':['Keys.COMMAND']})
 #  - sleep(3)
-#  - ${list} = [1,'v',True,None,'False']
-#  - sendKeys('name=wd', )
+#  - sendKeys('name=wd', 'test')
+#  - sleep(3)
+#  - sendKeys('name=wd', ['Keys.COMMAND','a'])
+#  - keyDownAndkeyUp(${baidus})
+#  - sendKeys(${t6}[1])
+#  - sleep(3)
 #  - sleep(3)
 #  - ifcheck('id=su1'):
 #      - click('id=su')
 #    elifcheck('id=su'):
 #      - ${getText} = $.getText('class=hot-refresh-text')
 #      - click('class=hot-refresh-text')
-#  - ${isSelected} = $.isSelected('id=su')
+#  - ${isSelected} = $.isSelected(1,2,[1,2,${t6}],{"key":1,'key1':[1,2,"list text , skskk"]})
 #  - ${isDisplayed} = $.isDisplayed('id=su')
 #  - ${isEnabled} = $.isEnabled('id=su')
 #  - ${getSize} = $.getSize('id=su')

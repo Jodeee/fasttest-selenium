@@ -107,13 +107,13 @@ class ActionAnalysis(object):
         :param param:
         :return:
         '''
-        if re.match(r"^'$", param):
+        if re.match(r"^'(.*)'$", param):
             param = param.strip("'")
-        elif re.match(r'^"$', param):
+        elif re.match(r'^"(.*)"$', param):
             param = param.strip('"')
-        elif re.search(r'(^\${\w+}?$)', param):
+        elif re.match(r'(^\${\w+}?$)', param):
             param = self.__get_variables(param)
-        elif re.search(r'(^\${\w+}?\[.+\]$)', param):
+        elif re.match(r'(^\${\w+}?\[.+\]$)', param):
             index = param.index('}[')
             param_value = self.__get_variables(param[:index+1])
             key = self.__get_eval(param[index + 2:-1])
@@ -121,8 +121,35 @@ class ActionAnalysis(object):
                 param = param_value[key]
             except Exception as e:
                 raise e
+        elif re.match(r'^\[(.*)\]$', param):
+            par = param[1:-1]
+            if not par:
+                param = []
+            else:
+                par_list = re.split(r',(?=(?:[^\'"\[\]\{\}]|\'[^\']*\'|"[^"]*"|\[[^\[]*\]|\{[^\{]*\})*$)', par)
+                param_list = []
+                for par in par_list:
+                    par = self.__get_params_type(par.strip())
+                    param_list.append(par)
+                param = param_list
+        elif re.match(r'^\{(.*)\}$', param):
+            par = param[1:-1]
+            if not par:
+                param = {}
+            else:
+                par_list = re.split(r',(?=(?:[^\'"\[\]\{\}\$]|\'[^\']*\'|"[^"]*"|\[[^\[]*\]|\{[^\{]*\})*$)', par)
+                param_dict = {}
+                for par_str in par_list:
+                    str_list = par_str.split(':')
+                    if len(str_list) == 2:
+                        key = self.__get_params_type(str_list[0].strip())
+                        value = self.__get_params_type(str_list[-1].strip())
+                        param_dict[key] = value
+
+                param = param_dict
+
         else:
-            param = self.__get_eval(param)
+            param = self.__get_eval(param.strip())
         return param
 
     def __get_eval(self, str):
@@ -146,7 +173,7 @@ class ActionAnalysis(object):
         parms = parms.strip()
         if re.match('^\(.*\)$', parms):
             params = []
-            pattern_content = re.compile(r'(".*?")|(\'.*?\')|,| ')
+            pattern_content = re.compile(r'(".*?")|(\'.*?\')|(\{.*?\})|(\[.*?\])|(\$\{.*?\}\[\w+\])|(\$\{.*?\})|,| ')
             find_content = re.split(pattern_content, parms[1:-1])
             find_content = [x.strip() for x in find_content if x]
             for param in find_content:

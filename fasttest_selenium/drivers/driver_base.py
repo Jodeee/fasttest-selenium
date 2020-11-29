@@ -293,7 +293,14 @@ class DriverBase(object):
         :param text:
         :return:
         '''
-        element.send_keys(text)
+        if isinstance(text, list):
+            try:
+                text_str = 'element.send_keys({}, "{}")'.format(text[0], text[-1])
+                eval(text_str)
+            except Exception as e:
+                raise e
+        else:
+            element.send_keys(text)
 
     @staticmethod
     def is_selected(element):
