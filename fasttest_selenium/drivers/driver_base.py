@@ -293,14 +293,23 @@ class DriverBase(object):
         :param text:
         :return:
         '''
-        if isinstance(text, list):
-            try:
-                text_str = 'element.send_keys({}, "{}")'.format(text[0], text[-1])
-                eval(text_str)
-            except Exception as e:
-                raise e
-        else:
-            element.send_keys(text)
+        try:
+            str_list = []
+            for t_str in text:
+                if t_str is None:
+                    raise TypeError("the parms can'not be none")
+                if re.match(r'Keys\.\w+', t_str):
+                    try:
+                        t_str = eval(t_str)
+                    except:
+                        t_str = t_str
+                str_list.append(t_str)
+            if len(str_list) == 1:
+                element.send_keys(str_list[0])
+            elif len(str_list) == 2:
+                element.send_keys(str_list[0], str_list[1])
+        except Exception as e:
+            raise e
 
     @staticmethod
     def is_selected(element):

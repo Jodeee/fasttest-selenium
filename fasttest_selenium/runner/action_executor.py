@@ -261,6 +261,10 @@ class ActionExecutor(object):
         :return:
         '''
         parms = self.__get_value(action, 0)
+        if isinstance(parms, str):
+            parms = eval(parms)
+        if not isinstance(parms, dict):
+            raise TypeError('the parms type must be: dict')
         DriverBase.key_down_and_key_up(parms)
 
     def __action_switch_to_frame(self, action):
@@ -295,8 +299,15 @@ class ActionExecutor(object):
         :return:
         '''
         element = self.__get_element_info(action)
-        text = self.__get_value(action, 1)
-        DriverBase.send_keys(element, text)
+        text_list = []
+        if len(action.parms) == 2:
+            text_list.append(self.__get_value(action, 1))
+        elif len(action.parms) == 3:
+            text_list.append(self.__get_value(action, 1))
+            text_list.append(self.__get_value(action, 2))
+        else:
+            raise TypeError('missing 1 required positional argument')
+        DriverBase.send_keys(element, text_list)
 
     def __action_check(self, action):
         '''

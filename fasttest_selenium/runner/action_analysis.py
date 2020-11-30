@@ -121,33 +121,6 @@ class ActionAnalysis(object):
                 param = param_value[key]
             except Exception as e:
                 raise e
-        elif re.match(r'^\[(.*)\]$', param):
-            par = param[1:-1]
-            if not par:
-                param = []
-            else:
-                par_list = re.split(r',(?=(?:[^\'"\[\]\{\}]|\'[^\']*\'|"[^"]*"|\[[^\[]*\]|\{[^\{]*\})*$)', par)
-                param_list = []
-                for par in par_list:
-                    par = self.__get_params_type(par.strip())
-                    param_list.append(par)
-                param = param_list
-        elif re.match(r'^\{(.*)\}$', param):
-            par = param[1:-1]
-            if not par:
-                param = {}
-            else:
-                par_list = re.split(r',(?=(?:[^\'"\[\]\{\}\$]|\'[^\']*\'|"[^"]*"|\[[^\[]*\]|\{[^\{]*\})*$)', par)
-                param_dict = {}
-                for par_str in par_list:
-                    str_list = par_str.split(':')
-                    if len(str_list) == 2:
-                        key = self.__get_params_type(str_list[0].strip())
-                        value = self.__get_params_type(str_list[-1].strip())
-                        param_dict[key] = value
-
-                param = param_dict
-
         else:
             param = self.__get_eval(param.strip())
         return param
@@ -173,7 +146,7 @@ class ActionAnalysis(object):
         parms = parms.strip()
         if re.match('^\(.*\)$', parms):
             params = []
-            pattern_content = re.compile(r'(".*?")|(\'.*?\')|(\{.*?\})|(\[.*?\])|(\$\{.*?\}\[\w+\])|(\$\{.*?\})|,| ')
+            pattern_content = re.compile(r'(".*?")|(\'.*?\')|(\$\{.*?\}\[.*?\])|(\$\{.*?\})|,| ')
             find_content = re.split(pattern_content, parms[1:-1])
             find_content = [x.strip() for x in find_content if x]
             for param in find_content:
