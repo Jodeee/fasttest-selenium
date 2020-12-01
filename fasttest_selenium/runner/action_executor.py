@@ -135,6 +135,13 @@ class ActionExecutor(object):
         '''
         DriverBase.minimize_window()
 
+    def __action_fullscreen_window(self):
+        '''
+        fullscreenWindow
+        :return:
+        '''
+        DriverBase.fullscreen_window()
+
     def __action_delete_all_cookies(self):
         '''
         deleteAllCookies
@@ -284,13 +291,22 @@ class ActionExecutor(object):
         '''
         DriverBase.switch_to_default_content()
 
-    def __action_switch_to_Parent_frame(self):
+    def __action_switch_to_parent_frame(self):
         '''
         switchToParentFrame
         :param action:
         :return:
         '''
-        DriverBase.switch_to_Parent_fram()
+        DriverBase.switch_to_parent_frame()
+
+    def __action_switch_to_window(self, action):
+        '''
+        switchToWindow
+        :param action:
+        :return:
+        '''
+        handle = self.__get_value(action)
+        DriverBase.switch_to_window(handle)
 
     def __action_send_keys(self, action):
         '''
@@ -316,6 +332,16 @@ class ActionExecutor(object):
         :return:
         '''
         self.__get_element_info(action)
+
+    def __action_save_screenshot(self, action):
+        '''
+        saveScreenshot
+        :param action:
+        :return:
+        '''
+        element = self.__get_element_info(action)
+        name = self.__get_value(action, 1)
+        return DriverBase.save_screenshot(element, name)
 
     def __action_is_selected(self, action):
         '''
@@ -381,6 +407,16 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         return DriverBase.get_tag_name(element)
 
+    def __action_get_css_property(self, action):
+        '''
+        getCssProperty
+        :param action:
+        :return:
+        '''
+        element = self.__get_element_info(action)
+        css_value = self.__get_value(action, 1)
+        return DriverBase.get_css_property(element, css_value)
+
     def __action_get_location(self, action):
         '''
         getLocation
@@ -389,6 +425,15 @@ class ActionExecutor(object):
         '''
         element = self.__get_element_info(action)
         return DriverBase.get_location(element)
+
+    def __action_get_rect(self, action):
+        '''
+        getRect
+        :param action:
+        :return:
+        '''
+        element = self.__get_element_info(action)
+        return DriverBase.get_rect(element)
 
     def __action_get_name(self):
         '''
@@ -413,6 +458,22 @@ class ActionExecutor(object):
         :return:
         '''
         return DriverBase.get_current_url()
+
+    def __action_get_current_window_handle(self):
+        '''
+        getCurrentWindowHandle
+        :param :
+        :return:
+        '''
+        return DriverBase.get_current_window_handle()
+
+    def __action_get_window_handles(self):
+        '''
+        getWindowHandles
+        :param :
+        :return:
+        '''
+        return DriverBase.get_window_handles()
 
     def __action_get_cookies(self):
         '''
@@ -439,6 +500,17 @@ class ActionExecutor(object):
         '''
         return DriverBase.get_window_position()
 
+    def __action_set_window_position(self, action):
+        '''
+        setWindowPosition
+        :param :
+        :return:
+        '''
+        # todo
+        x = self.__get_value(action)
+        y = self.__get_value(action)
+        DriverBase.set_window_position(float(x), float(y))
+
     def __action_get_window_size(self):
         '''
         getWindowSize
@@ -446,6 +518,17 @@ class ActionExecutor(object):
         :return:
         '''
         return DriverBase.get_window_size()
+
+    def __action_set_window_size(self, action):
+        '''
+        setWindowSize
+        :param :
+        :return:
+        '''
+        # todo
+        width = self.__get_value(action)
+        height = self.__get_value(action)
+        DriverBase.set_window_size(float(width), float(height))
 
     def __action_get_elements(self, action):
         '''
@@ -514,6 +597,8 @@ class ActionExecutor(object):
             result = self.__action_is_displayed(action)
         elif action.key == '$.isEnabled':
             result = self.__action_is_enabled(action)
+        elif action.key == '$.saveScreenshot':
+            result = self.__action_save_screenshot(action)
         elif action.key == '$.getText':
             result = self.__action_get_text(action)
         elif action.key == '$.getSize':
@@ -524,14 +609,22 @@ class ActionExecutor(object):
             result = self.__action_get_text(action)
         elif action.key == '$.getTagName':
             result = self.__action_get_tag_name(action)
+        elif action.key == '$.getCssProperty':
+            result = self.__action_get_css_property(action)
         elif action.key == '$.getLocation':
             result = self.__action_get_location(action)
+        elif action.key == '$.getRect':
+            result = self.__action_get_rect(action)
         elif action.key == '$.getName':
             result = self.__action_get_name()
         elif action.key == '$.getTitle':
             result = self.__action_get_title()
         elif action.key == '$.getCurrentUrl':
             result = self.__action_get_current_url()
+        elif action.key == '$.getCurrentWindowHandle':
+            result = self.__action_get_current_window_handle()
+        elif action.key == '$.getWindowHandles':
+            result = self.__action_get_window_handles()
         elif action.key == '$.getCookies':
             result = self.__action_get_cookies()
         elif action.key == '$.getCookie':
@@ -563,7 +656,7 @@ class ActionExecutor(object):
         else:
            result = action.parms[0]
 
-        log_info(f'{action.name}: {type(result)} {result}')
+        log_info(f'{action.name}: --> {type(result)} {result}')
         return result
 
     def __action_setVar(self, action):
@@ -622,6 +715,8 @@ class ActionExecutor(object):
                 exec(l)
             func = f'{action.key}({action.parms})'
             result = eval(func)
+            if result:
+                log_info(f'{action.key}: --> {type(result)} {result}')
             return result
         else:
             raise KeyError('The {} keyword is undefined!'.format(action.step))
@@ -670,6 +765,9 @@ class ActionExecutor(object):
 
         elif action.key == 'minWindow':
             result = self.__action_minimize_window()
+
+        elif action.key == 'fullscreenWindow':
+            result = self.__action_fullscreen_window()
 
         elif action.key == 'deleteAllCookies':
             result = self.__action_delete_all_cookies()
@@ -720,7 +818,10 @@ class ActionExecutor(object):
             result = self.__action_switch_to_default_content()
 
         elif action.key == 'switchToParentFrame':
-            result = self.__action_switch_to_Parent_frame()
+            result = self.__action_switch_to_parent_frame()
+
+        elif action.key == 'switchToWindow':
+            result = self.__action_switch_to_window(action)
 
         elif action.key == 'sendKeys':
             result = self.__action_send_keys(action)

@@ -142,7 +142,6 @@ class Project(object):
             Var.testcase = None
 
     def start(self):
-        log_info('******************* analytical desired capabilities *******************')
         server = ServerUtils(Var.browser, Var.browser_config)
         Var.instance = server.start_server()
         DriverBase.init()

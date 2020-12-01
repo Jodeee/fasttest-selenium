@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import re
+import os
 from concurrent import futures
 from fasttest_selenium.common import *
 from selenium.webdriver.common.by import By
@@ -100,6 +101,15 @@ class DriverBase(object):
         :return:
         '''
         driver.minimize_window()
+
+    @staticmethod
+    def fullscreen_window():
+        '''
+        fullscreenWindow
+        :param:
+        :return:
+        '''
+        driver.fullscreen_window()
 
     @staticmethod
     def delete_all_cookies():
@@ -278,12 +288,20 @@ class DriverBase(object):
         driver.switch_to.default_content()
 
     @staticmethod
-    def switch_to_Parent_fram():
+    def switch_to_parent_frame():
         '''
         switchToParentFrame
         :return:
         '''
         driver.switch_to.parent_frame()
+
+    @staticmethod
+    def switch_to_window(handle):
+        '''
+        switchToWindow
+        :return:
+        '''
+        driver.switch_to.window(handle)
 
     @staticmethod
     def send_keys(element, text):
@@ -376,6 +394,15 @@ class DriverBase(object):
         return element.tag_name
 
     @staticmethod
+    def get_css_property(element, css):
+        '''
+        getCssProperty
+        :param element:
+        :return:
+        '''
+        return element.value_of_css_property(css)
+
+    @staticmethod
     def get_location(element):
         '''
         getLocation
@@ -383,6 +410,13 @@ class DriverBase(object):
         :return:
         '''
         return element.location
+
+    @staticmethod
+    def get_rect(element):
+        '''
+        getRect
+        '''
+        return element.rect
 
     @staticmethod
     def get_name():
@@ -407,6 +441,22 @@ class DriverBase(object):
         :return:
         '''
         return driver.current_url
+
+    @staticmethod
+    def get_current_window_handle():
+        '''
+        getCurrentWindowHandle
+        :return:
+        '''
+        return driver.current_window_handle
+
+    @staticmethod
+    def get_window_handles():
+        '''
+        getWindowHandles
+        :return:
+        '''
+        return driver.window_handles
 
     @staticmethod
     def get_cookies():
@@ -434,12 +484,44 @@ class DriverBase(object):
         return driver.get_window_position()
 
     @staticmethod
+    def set_window_position(x, y):
+        '''
+        setWindowPosition
+        :return:
+        '''
+        return driver.set_window_position(x, y)
+
+    @staticmethod
     def get_window_size():
         '''
         getWindowSize
         :return:
         '''
         return driver.get_window_size()
+
+    @staticmethod
+    def set_window_size(width, height):
+        '''
+        setWindowSize
+        :return:
+        '''
+        return driver.set_window_size(width, height)
+
+    @staticmethod
+    def save_screenshot(element, name):
+        '''
+        saveScreenshot
+        :return:
+        '''
+        try:
+            image_dir = os.path.join(Var.report, 'screenshot')
+            if not os.path.exists(image_dir):
+                os.makedirs(image_dir)
+            image_path = os.path.join(image_dir, '{}'.format(name))
+            element.screenshot(image_path)
+        except Exception as e:
+            raise e
+        return image_path
 
     @staticmethod
     def get_element(type, text):

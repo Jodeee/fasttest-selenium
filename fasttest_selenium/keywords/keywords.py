@@ -4,10 +4,9 @@
 def return_keywords():
     keywords = [
         "openUrl",  # 打开地址
-        "close",  # 关闭浏览器
-        "quit",  # 关闭浏览器并退出驱动
+        "close",  # 关闭标签页或窗口
         "submit",  # 提交表单
-        "back",  # 返回上一步
+        "back",  # 后退
         "forward", # 前进
         "refresh", # 刷新
         "check",  # 检查元素
@@ -25,27 +24,36 @@ def return_keywords():
         "clear",  # 清除
         "maxWindow",  # 窗口最大化
         "minWindow",  # 窗口最小化
+        "fullscreenWindow", # 全屏窗口
         "implicitlyWait", # 设置等待时间
         "deleteAllCookies",  # 删除所有cookies
         "deleteCookies",  # 删除指定cookies
         "switchToFrame" # 切换到指定frame
         "switchToDefaultContent", # 切换到主文档
         "switchToParentFrame", # 切回到父frame
+        "switchToWindow", # 切换句柄
+        "$.saveScreenshot" # 截图
         "$.isSelected",  # 判断是否选中
         "$.isDisplayed",  # 判断元素是否显示
         "$.isEnabled",  # 判断元素是否被使用
         "$.getSize",  # 获取元素大小
+        "$.getLocation",  # 获取元素坐标
+        "$.getRect", # 获取元素位置大小
         "$.getAttribute",  # 获取元素属性
         "$.getText",  # 获取元素文案
         "$.getTagName",  # 获取元素tag Name
-        "$.getLocation",  # 获取元素坐标
+        "$.getCssProperty"  # 获取元素css
         "$.getName",  # 获取浏览器名字
         "$.getTitle",  # 获取标题
         "$.getCurrentUrl", # 获取当前页面url
+        "$.getCurrentWindowHandle" # 获取当前窗口句柄
+        "$.getWindowHandles" # 获取所有窗口句柄
         "$.getCookies",  # 获取所有cookie
         "$.getCookie",  # 获取指定cookie
         "$.getWindowPosition",  # 获取窗口坐标
+        "$.setWindowPosition",  # 设置设置窗口位置
         "$.getWindowSize",  # 获取窗口大小
+        "$.setWindowSize", # 设置窗口大小
         "$.getElement",  # 获取元素
         "$.getElements",  # 获取元素
         "$.id",  # 科学运算
