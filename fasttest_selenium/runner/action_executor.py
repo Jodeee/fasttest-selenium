@@ -659,14 +659,14 @@ class ActionExecutor(object):
         log_info(f'{action.name}: --> {type(result)} {result}')
         return result
 
-    def __action_setVar(self, action):
+    def __action_set_var(self, action):
         '''
+        setVar
         :return:
         '''
-        key = action.parms[0]
-        values = action.parms[1]
+        key = self.__get_value(action, 0)
+        values = self.__get_value(action, 1)
         Var.global_var[key] = values
-        return
 
     def __action_call(self, action):
         '''
@@ -730,14 +730,14 @@ class ActionExecutor(object):
         if action.tag and action.tag == 'getVar':
             result = self.__action_getVar(action)
 
-        elif action.tag and action.tag == 'setVar':
-            result = self.__action_setVar(action)
-
         elif action.tag and action.tag == 'call':
             result = self.__action_call(action)
 
         elif action.tag and action.tag == 'other':
             result = self.__action_other(action)
+
+        elif action.key == 'setVar':
+            result = self.__action_set_var(action)
 
         elif action.key == 'openUrl':
             result = self.__action_open_url(action)
@@ -822,6 +822,12 @@ class ActionExecutor(object):
 
         elif action.key == 'switchToWindow':
             result = self.__action_switch_to_window(action)
+
+        elif action.key == 'setWindowSize':
+            result = self.__action_set_window_size(action)
+
+        elif action.key == 'setWindowPosition':
+            result = self.__action_set_window_position(action)
 
         elif action.key == 'sendKeys':
             result = self.__action_send_keys(action)

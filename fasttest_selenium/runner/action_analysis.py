@@ -176,21 +176,6 @@ class ActionAnalysis(object):
         })
         return action_data
 
-    def __analysis_setVar_keywords(self, step):
-        key = '$.setVar'
-        parms = self.__get_parms(step.lstrip('$.setVar'))
-        if len(parms) != 2:
-            raise SyntaxError(f'"{step}" Missing required parameter key or value!')
-        if not isinstance(parms[0], str):
-            raise TypeError(f'"{step}" Key must be str, not {type(parms[0])}')
-        action_data = Dict({
-            'key': key,
-            'parms': parms,
-            'tag': 'setVar',
-            'step': step
-        })
-        return action_data
-
     def __analysis_variable_keywords(self, step):
         step_split = step.split('=', 1)
         if len(step_split) != 2:
@@ -257,8 +242,6 @@ class ActionAnalysis(object):
             return self.__analysis_not_exist_parms_keywords(step)
         elif re.match(r'\$\{\w+\}=|\$\{\w+\} =', step):
             return self.__analysis_variable_keywords(step)
-        elif re.match(r'\$\.setVar\(.*\)', step):
-            return self.__analysis_setVar_keywords(step)
         elif re.match(r'call \w+\(.*\)', step):
             return self.__analysis_common_keywords(step, style)
         elif re.match(r'if |elif |while |assert .+', step):
@@ -270,7 +253,7 @@ class ActionAnalysis(object):
     def executor_keywords(self, action, style):
 
         try:
-            if action.tag in ['setVar', 'getVar', 'call', 'other']:
+            if action.tag in ['getVar', 'call', 'other']:
                 result = self.action_executor.action_executor(action)
             elif action.key in Var.default_keywords_data:
                 result = self.action_executor.action_executor(action)

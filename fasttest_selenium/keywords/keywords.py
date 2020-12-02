@@ -32,6 +32,8 @@ def return_keywords():
         "switchToDefaultContent", # 切换到主文档
         "switchToParentFrame", # 切回到父frame
         "switchToWindow", # 切换句柄
+        "setWindowSize",  # 设置窗口大小
+        "setWindowPosition",  # 设置设置窗口位置
         "$.saveScreenshot" # 截图
         "$.isSelected",  # 判断是否选中
         "$.isDisplayed",  # 判断元素是否显示
@@ -51,14 +53,12 @@ def return_keywords():
         "$.getCookies",  # 获取所有cookie
         "$.getCookie",  # 获取指定cookie
         "$.getWindowPosition",  # 获取窗口坐标
-        "$.setWindowPosition",  # 设置设置窗口位置
         "$.getWindowSize",  # 获取窗口大小
-        "$.setWindowSize", # 设置窗口大小
         "$.getElement",  # 获取元素
         "$.getElements",  # 获取元素
         "$.id",  # 科学运算
         "$.getVar",  # 获取全局变量
-        "$.setVar",  # 设置全局变量
+        "setVar",  # 设置全局变量
         "sleep",
         "break",
         "while",
