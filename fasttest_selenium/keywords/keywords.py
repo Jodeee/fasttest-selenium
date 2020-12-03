@@ -28,13 +28,14 @@ def return_keywords():
         "implicitlyWait", # 设置等待时间
         "deleteAllCookies",  # 删除所有cookies
         "deleteCookies",  # 删除指定cookies
-        "switchToFrame" # 切换到指定frame
+        "switchToFrame", # 切换到指定frame
         "switchToDefaultContent", # 切换到主文档
         "switchToParentFrame", # 切回到父frame
         "switchToWindow", # 切换句柄
         "setWindowSize",  # 设置窗口大小
         "setWindowPosition",  # 设置设置窗口位置
-        "$.saveScreenshot" # 截图
+        "executeScript", # 执行JS
+        "$.saveScreenshot", # 截图
         "$.isSelected",  # 判断是否选中
         "$.isDisplayed",  # 判断元素是否显示
         "$.isEnabled",  # 判断元素是否被使用
@@ -44,12 +45,12 @@ def return_keywords():
         "$.getAttribute",  # 获取元素属性
         "$.getText",  # 获取元素文案
         "$.getTagName",  # 获取元素tag Name
-        "$.getCssProperty"  # 获取元素css
+        "$.getCssProperty",  # 获取元素css
         "$.getName",  # 获取浏览器名字
         "$.getTitle",  # 获取标题
         "$.getCurrentUrl", # 获取当前页面url
-        "$.getCurrentWindowHandle" # 获取当前窗口句柄
-        "$.getWindowHandles" # 获取所有窗口句柄
+        "$.getCurrentWindowHandle", # 获取当前窗口句柄
+        "$.getWindowHandles", # 获取所有窗口句柄
         "$.getCookies",  # 获取所有cookie
         "$.getCookie",  # 获取指定cookie
         "$.getWindowPosition",  # 获取窗口坐标

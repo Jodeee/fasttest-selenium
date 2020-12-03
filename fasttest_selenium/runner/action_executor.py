@@ -280,7 +280,7 @@ class ActionExecutor(object):
         :param action:
         :return:
         '''
-        frame_reference = self.__get_value(action, 2)
+        frame_reference = self.__get_value(action)
         DriverBase.switch_to_frame(frame_reference)
 
     def __action_switch_to_default_content(self):
@@ -506,10 +506,18 @@ class ActionExecutor(object):
         :param :
         :return:
         '''
-        # todo
         x = self.__get_value(action)
-        y = self.__get_value(action)
+        y = self.__get_value(action, 1)
         DriverBase.set_window_position(float(x), float(y))
+
+    def __action_execute_script(self, action):
+        '''
+        executeScript
+        :param :
+        :return:
+        '''
+        js_value = self.__get_value(action)
+        DriverBase.execute_script(js_value)
 
     def __action_get_window_size(self):
         '''
@@ -828,6 +836,9 @@ class ActionExecutor(object):
 
         elif action.key == 'setWindowPosition':
             result = self.__action_set_window_position(action)
+
+        elif action.key == 'executeScript':
+            result = self.__action_execute_script(action)
 
         elif action.key == 'sendKeys':
             result = self.__action_send_keys(action)

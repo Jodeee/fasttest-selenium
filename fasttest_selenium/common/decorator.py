@@ -40,7 +40,7 @@ def keywords(func, *args, **kwds):
                 else:
                     Var.instance.save_screenshot(file)
             except:
-                log_error(traceback.format_exc(), False)
+                log_error('screenshot failed!', False)
 
             stop_time = time.time()
             duration = str('%.1f' % (stop_time - start_time))

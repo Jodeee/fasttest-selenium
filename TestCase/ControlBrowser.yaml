@@ -1,0 +1,39 @@
+module: ControlBrowser
+skip: false
+description: 操控浏览器
+steps:
+  - openUrl('https://www.baidu.com') # 打开URL
+
+  - ${getName} = $.getName() # 获取浏览器名字
+
+  # 窗口设置
+  - maxWindow() # 窗口最大化
+  - minWindow() # 窗口最小化
+  - fullscreenWindow() # 全屏窗口
+  - setWindowSize(2000,1500) # 设置窗口大小
+  - setWindowPosition(10,30) # 设置窗口位置
+  - ${w_size} = $.getWindowSize() # 获取窗口大小
+  - ${w_position} = $.getWindowPosition() # 获取窗口位置
+
+  # 切换窗口
+  - click('xpath=//*[@id="s-top-left"]/a[1]')
+  - ${handle} = $.getCurrentWindowHandle() # 获取当前窗口句柄
+  - ${all_handle} = $.getWindowHandles() # 获取所有窗口句柄
+  - switchToWindow(${all_handle}[-1]) # 切换窗口句柄
+  - ${title} = $.getTitle() # 获取当前窗口标题
+  - ${current_url} = $.getCurrentUrl() # 获取当前窗口url
+
+  # 前进、 后退、 刷新
+  - click('xpath=//*[@id="channel-all"]/div/ul/li[2]')
+  - click('xpath=//*[@id="channel-all"]/div/ul/li[3]')
+  - back() # 后退
+  - forward() # 前进
+  - refresh() # 刷新
+
+  - close() # 关闭当前页面
+
+
+
+
+
+

@@ -304,6 +304,14 @@ class DriverBase(object):
         driver.switch_to.window(handle)
 
     @staticmethod
+    def execute_script(js):
+        '''
+        executeScript
+        :return:
+        '''
+        driver.execute_script(js)
+
+    @staticmethod
     def send_keys(element, text):
         '''
         sendKeys

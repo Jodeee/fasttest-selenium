@@ -1,0 +1,8 @@
+module: Cookies
+skip: false
+description: Cookies相关
+steps:
+  - openUrl('https://www.baidu.com') # 打开URL
+
+
+
