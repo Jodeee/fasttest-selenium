@@ -27,9 +27,9 @@ steps:
   # 鼠标从当前位置移动到某个坐标
   - moveByOffset(10,10)
   # 鼠标移动到某个元素上
-  - moveToElement('id=s_btn_wr')
+  - moveToElement('xpath=//*[@id="hotsearch-content-wrapper"]/li[1]/a/span[2]')
   # 移动到距某个元素(左上角坐标)多少距离的位置
-  - moveToElementWithOffset('name=tj_briicon',10,20)
+  - moveToElementWithOffset('xpath=//*[@id="hotsearch-content-wrapper"]/li[1]/a/span[2]',10,20)
 
   # 输入
   - sendKeys('name=wd','te')
