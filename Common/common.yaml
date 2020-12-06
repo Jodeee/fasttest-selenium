@@ -1,6 +1,7 @@
-Taobao_common:
- description: 淘宝搜索商品
- input: [mobile_phone]
+common_action:
+ description: 公共方法
+ input: [value]
  output: []
  steps:
-    - click('我的淘')
+    - moveToElement(${value})
+    - sleep(5)

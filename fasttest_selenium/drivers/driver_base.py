@@ -3,11 +3,12 @@
 import re
 import os
 from concurrent import futures
+from fasttest_selenium.utils import *
 from fasttest_selenium.common import *
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, NoSuchWindowException, InvalidSessionIdException
 
 class DriverBase(object):
 
@@ -27,7 +28,18 @@ class DriverBase(object):
         :param url:
         :return:
         '''
-        driver.get(url)
+        try:
+            driver.get(url)
+        except NoSuchWindowException:
+            handles = DriverBase.get_window_handles()
+            # 如果浏览器未关闭打开新窗口触发该异常，提示用户切换窗口
+            if handles:
+                raise NoSuchWindowException('no such window, execute the switchToWindow method to switch the window')
+            DriverBase.createSession()
+            driver.get(url)
+        except InvalidSessionIdException:
+            DriverBase.createSession()
+            driver.get(url)
 
     @staticmethod
     def close():
@@ -37,6 +49,12 @@ class DriverBase(object):
         :return:
         '''
         driver.close()
+
+    @staticmethod
+    def createSession():
+        server = ServerUtils(Var.browser, Var.browser_config)
+        Var.instance = server.start_server()
+        DriverBase.init()
 
     @staticmethod
     def quit():
@@ -123,11 +141,20 @@ class DriverBase(object):
     @staticmethod
     def delete_cookie(name):
         '''
-        deleteCookies
+        deleteCookie
         :param name
         :return:
         '''
         driver.delete_cookie(name)
+
+    @staticmethod
+    def add_cookie(cookie_dict):
+        '''
+        addCookie
+        :param cookie_dict
+        :return:
+        '''
+        driver.add_cookie(cookie_dict)
 
     @staticmethod
     def submit(element):
@@ -187,7 +214,7 @@ class DriverBase(object):
     @staticmethod
     def drag_and_drop(element, target):
         '''
-        dragAndDrop
+        dragDrop
         :param element:鼠标按下的源元素
         :param target:鼠标释放的目标元素
         :return:

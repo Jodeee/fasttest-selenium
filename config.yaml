@@ -1,6 +1,6 @@
-testenv: test
 driver: selenium
 browser: Chrome
+isReset: True
 desiredcaps:
     - chrome:
         - path: '/Users/xiongjunjie/Downloads/chromedriver'
@@ -10,4 +10,4 @@ desiredcaps:
           other: 'xx'
 
 testcase:
-    - testcase/OpenWebView.yaml
+    - TestCase/

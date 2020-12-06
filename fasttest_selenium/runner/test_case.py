@@ -22,7 +22,7 @@ class TestCase(unittest.TestCase):
             raise NameError("name 'testcase' is not defined")
         for key, value in Var.testcase.items():
             setattr(self, key, value)
-        self.snapshot_dir = os.path.join(Var.report, self.module, self.testcase_path.split(os.sep)[-1].split(".")[0])
+        self.snapshot_dir = os.path.join(Var.report,'Steps', self.module, self.testcase_path.split(os.sep)[-1].split(".")[0])
 
     def run(self, result=None):
 

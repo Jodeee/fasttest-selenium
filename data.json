@@ -7,8 +7,7 @@
     "tianmao.png"
   ],
   "keywords": [
-    "find_elements_by_id",
-    "getText",
-    "openUrl"
+    "keyDown",
+    "getText"
   ]
 }

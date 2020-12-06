@@ -9,13 +9,13 @@ class RunCase(TestCase):
     def setUp(self):
         if self.skip:
             self.skipTest('skip')
+        if Var.isReset:
+            DriverBase.createSession()
 
     def testCase(self):
         case = CaseAnalysis()
         case.iteration(self.steps)
 
     def tearDown(self):
-        try:
-            DriverBase.close()
-        except:
-            pass
+        if Var.isReset:
+            DriverBase.quit()

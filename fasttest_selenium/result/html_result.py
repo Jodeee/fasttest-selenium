@@ -345,9 +345,9 @@ class HTMLTestRunner(Template_mixin):
                 file_list = sort_string(file_list)
                 for out in file_list:
                     out_list = out.split('|:|')
-                    f_path = testinfo.module_name + os.path.join(path, out_list[-2].replace('/', '&2F').replace('\\',
+                    f_path = 'Steps/{}{}'.format(testinfo.module_name, os.path.join(path, out_list[-2].replace('/', '&2F').replace('\\',
                                                                                                             '&5C').replace(
-                        '*', '&2a').replace('\n', ''))
+                        '*', '&2a').replace('\n', '')))
                     if len(out_list[2]) < 6:
                         runtime = '{}{}'.format(out_list[2],' ' * (6-len(out_list[2])))
                     else:

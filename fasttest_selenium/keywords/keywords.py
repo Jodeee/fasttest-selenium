@@ -19,7 +19,7 @@ def return_keywords():
         "moveByOffset", # 鼠标从当前位置移动到某个坐标
         "moveToElement",  # 鼠标移动
         "moveToElementWithOffset", #移动到距某个元素(左上角坐标)多少距离的位置
-        "keyDownAndkeyUp", # 按下某个键盘上的键
+        # "keyDownAndkeyUp", # 按下某个键盘上的键
         "sendKeys",  # 输入
         "clear",  # 清除
         "maxWindow",  # 窗口最大化
@@ -27,7 +27,8 @@ def return_keywords():
         "fullscreenWindow", # 全屏窗口
         "implicitlyWait", # 设置等待时间
         "deleteAllCookies",  # 删除所有cookies
-        "deleteCookies",  # 删除指定cookies
+        "deleteCookie",  # 删除指定cookies
+        "addCookie", # 添加cookies
         "switchToFrame", # 切换到指定frame
         "switchToDefaultContent", # 切换到主文档
         "switchToParentFrame", # 切回到父frame
@@ -58,6 +59,7 @@ def return_keywords():
         "$.getElement",  # 获取元素
         "$.getElements",  # 获取元素
         "$.id",  # 科学运算
+        "$.getLen", # 获取长度
         "$.getVar",  # 获取全局变量
         "setVar",  # 设置全局变量
         "sleep",
@@ -66,8 +68,8 @@ def return_keywords():
         "if",
         "elif",
         "else",
-        "ifcheck",
-        "elifcheck",
+        # "ifcheck",
+        # "elifcheck",
         "assert"
     ]
 

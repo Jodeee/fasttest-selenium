@@ -4,7 +4,7 @@ import os
 import re
 import json
 from fasttest_selenium.common import Var, Dict, log_info
-from fasttest_selenium.common.decorator import keywords
+from fasttest_selenium.common.decorator import mach_keywords, executor_keywords
 from fasttest_selenium.runner.action_executor import ActionExecutor
 
 class ActionAnalysis(object):
@@ -31,7 +31,7 @@ class ActionAnalysis(object):
         elif Var.extensions_var and name in Var.extensions_var['variable'].keys():
             object_var = Var.extensions_var['variable'][name]
         else:
-            object_var = None
+            raise KeyError(name)
         return object_var
 
     def __join_value(self, contents, join):
@@ -116,7 +116,7 @@ class ActionAnalysis(object):
         elif re.match(r'(^\${\w+}?\[.+\]$)', param):
             index = param.index('}[')
             param_value = self.__get_variables(param[:index+1])
-            key = self.__get_eval(param[index + 2:-1])
+            key = self.__get_params_type(param[index + 2:-1])
             try:
                 param = param_value[key]
             except Exception as e:
@@ -229,7 +229,8 @@ class ActionAnalysis(object):
             'step': f'{key} {parms}'
         })
         return action_data
-        
+
+    @mach_keywords
     def __match_keywords(self, step, style):
 
         if re.match(' ', step):
@@ -249,7 +250,7 @@ class ActionAnalysis(object):
         else:
             raise SyntaxError(f'"{step}"')
 
-    @keywords
+    @executor_keywords
     def executor_keywords(self, action, style):
 
         try:
@@ -272,9 +273,11 @@ class ActionAnalysis(object):
             raise e
 
     def action_analysis(self, step, style, common):
-        log_info(step)
+        log_info(' {}'.format(step))
         self.common_var = common
+        # 匹配关键字、解析参数
         action_dict = self.__match_keywords(step, style)
+        # 执行关键字
         result = self.executor_keywords(action_dict, style)
         return result
 

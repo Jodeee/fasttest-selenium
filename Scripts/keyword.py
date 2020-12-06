@@ -2,48 +2,15 @@
 # -*- coding: utf-8 -*-
 from fasttest_selenium.driver import *
 
-def openUrl(url):
-
-    driver.get(url)
-    return
-
-def find_elements_by_id(name):
+def keyDown(name):
     '''
-    直接调用appium、macaca底层api
-    :param name:
-    :return:
+    调用selenium api完成负责动作
     '''
-    raise Exception("Can't find element {}".format(id))
-    return name
+    elements = driver.find_elements(By.CLASS_NAME, name)
+    ActionChains(driver).key_down(Keys.COMMAND, elements[0]).send_keys('c').key_up(Keys.COMMAND).perform()
 
-def getText(id, index=1):
+def getText():
     '''
-    调用已封装api
-    :param id:
-    :return:
+    调用普通脚本
     '''
-    text = None
-
-    elements = driver.wait_for_elements_by_name(id)
-    if elements:
-        text = elements[index].text
-    else:
-        raise Exception("Can't find element {}".format(id))
-    return text
-
-if __name__ == '__main__':
-    import time
-    start = time.time()
-    s = 5
-    while s >= 1:
-        print(s)
-        if s >= 4:
-            s = s - 1
-        elif 1 < s < 3:
-            s = s - 1
-        else:
-            time.sleep(5)
-            s = s - 1
-
-    end = time.time()
-    print(end-start)
+    return '这是一条测试数据!'

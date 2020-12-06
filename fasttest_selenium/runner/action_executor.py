@@ -23,9 +23,24 @@ class ActionExecutor(object):
                     file_list.append(f'from Scripts.{f[:-3]} import *')
 
         except Exception as e:
-            log_error(e, False)
+            log_error(' {}'.format(e), False)
 
         return file_list
+
+    def __out_result(self, key, result):
+        '''
+        input result
+        '''
+        if isinstance(result, list):
+            log_info(f' {key}: --> {type(result)}')
+            for l in result:
+                log_info(' {}'.format(l))
+        elif isinstance(result, dict):
+            log_info(f' {key}: --> {type(result)}')
+            for k, v in result.items():
+                log_info(' {}: {}'.format(k, v))
+        else:
+            log_info(f' {key}: --> {type(result)} {result}')
 
     def __get_element_info(self, action, index=0, is_return=False):
         '''
@@ -38,7 +53,7 @@ class ActionExecutor(object):
         if isinstance(parms[index], WebElement):
             element = parms[index]
         elif isinstance(parms[index], str):
-            if not re.match(r'id|name|class|tag_name|link_text|partial_link_text|xpath|css_selector\s*=.+', parms[index].strip(), re.I):
+            if not re.match(r'^(id|name|class|tag_name|link_text|partial_link_text|xpath|css_selector)\s*=.+', parms[index].strip(), re.I):
                 raise TypeError('input parameter format error:{}'.format(parms[index]))
             key = parms[index].split('=', 1)[0].strip()
             value = parms[index].split('=', 1)[-1].strip()
@@ -151,11 +166,19 @@ class ActionExecutor(object):
 
     def __action_delete_cookie(self, action):
         '''
-        deleteCookies
+        deleteCookie
         :return:
         '''
         key = self.__get_value(action)
         DriverBase.delete_cookie(key)
+
+    def __action_add_cookie(self, action):
+        '''
+        addCookie
+        :return:
+        '''
+        key = self.__get_value(action)
+        DriverBase.add_cookie(key)
 
     def __action_clear(self, action):
         '''
@@ -263,7 +286,7 @@ class ActionExecutor(object):
 
     def __action_key_down_and_key_up(self, action):
         '''
-        keyDown
+        keyDown 废弃
         :param action:
         :return:
         '''
@@ -490,7 +513,7 @@ class ActionExecutor(object):
         :return:
         '''
         key = self.__get_value(action)
-        DriverBase.get_cookie(key)
+        return DriverBase.get_cookie(key)
 
     def __action_get_window_position(self):
         '''
@@ -546,7 +569,7 @@ class ActionExecutor(object):
         parms = action.parms
         if not len(parms):
             raise TypeError('missing 1 required positional argument')
-        if not re.match(r'[id|name|class|tag_name|link_text|partial_link_text|xpath|css_selector]+=(.*)+',
+        if not re.match(r'^(id|name|class|tag_name|link_text|partial_link_text|xpath|css_selector)\s*=.+',
                         parms[0].strip(), re.I):
             raise TypeError('input parameter format error:{}'.format(parms[0]))
         key = parms[0].strip().split('=', 1)[0]
@@ -564,6 +587,17 @@ class ActionExecutor(object):
         if not element:
             return False
         return True
+
+    def __action_len(self, action):
+        """
+        len
+        :param action:
+        :return:
+        """
+        value = self.__get_value(action)
+        if value:
+            return len(value)
+        return 0
 
     def __action_sleep(self, action):
         """
@@ -647,6 +681,8 @@ class ActionExecutor(object):
             result = self.__action_get_elements(action)
         elif action.key == '$.id':
             result = eval(action.parms)
+        elif action.key == '$.getLen':
+            result = self.__action_len(action)
         elif action.key == '$.getVar':
             if Var.global_var:
                 if action.parms[0] in Var.global_var:
@@ -656,6 +692,7 @@ class ActionExecutor(object):
             else:
                 result = None
         elif action.key:
+            # 调用脚本
             list = self.__from_scripts_file()
             for l in list:
                 exec(l)
@@ -664,7 +701,7 @@ class ActionExecutor(object):
         else:
            result = action.parms[0]
 
-        log_info(f'{action.name}: --> {type(result)} {result}')
+        self.__out_result(action.name, result)
         return result
 
     def __action_set_var(self, action):
@@ -708,23 +745,29 @@ class ActionExecutor(object):
         parms = action.parms
         try:
             result = eval(parms)
-            log_info('{}: {}'.format(action.parms, result))
+            if result:
+                isTrue = True
+            else:
+                isTrue = False
+
+            log_info(' ---> {}'.format(isTrue))
             if key == 'assert':
                 assert result
-            return result
+            return isTrue
         except Exception as e:
             raise e
 
     def new_action_executor(self, action):
-
+        # 调用脚本
         if action.key:
             list = self.__from_scripts_file()
             for l in list:
                 exec(l)
+            # parms = repr(action.data["parms"][0])
             func = f'{action.key}({action.parms})'
             result = eval(func)
             if result:
-                log_info(f'{action.key}: --> {type(result)} {result}')
+                self.__out_result(action.key, result)
             return result
         else:
             raise KeyError('The {} keyword is undefined!'.format(action.step))
@@ -780,8 +823,11 @@ class ActionExecutor(object):
         elif action.key == 'deleteAllCookies':
             result = self.__action_delete_all_cookies()
 
-        elif action.key == 'deleteCookies':
+        elif action.key == 'deleteCookie':
             result = self.__action_delete_cookie(action)
+
+        elif action.key == 'addCookie':
+            result = self.__action_add_cookie(action)
 
         elif action.key == 'clear':
             result = self.__action_clear(action)
@@ -856,10 +902,10 @@ class ActionExecutor(object):
             result = self.__action_ifcheck(action)
 
         elif action.key == 'break':
-            result = None
+            result = True
 
         elif action.key == 'else':
-            result = None
+            result = True
 
         else:
             raise KeyError('The {} keyword is undefined!'.format(action.key))

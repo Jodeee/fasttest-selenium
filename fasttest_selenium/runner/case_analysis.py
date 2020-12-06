@@ -19,7 +19,7 @@ class CaseAnalysis(object):
             for step in steps:
                 if isinstance(step, str):
                     self.case_executor(step, style, common)
-                    if step == 'break':
+                    if step.startswith('break'):
                         return True
                 elif isinstance(step, dict):
                     result = self.iteration(step, style, common)

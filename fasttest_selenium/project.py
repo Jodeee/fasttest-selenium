@@ -64,7 +64,7 @@ class Project(object):
                 if dict:
                     log_info('******************* analytical data *******************')
                 for extensionsK, extensionsV in dict.items():
-                    log_info('{}: {}'.format(extensionsK, extensionsV))
+                    log_info(' {}: {}'.format(extensionsK, extensionsV))
                     Var.extensions_var[extensionsK] = extensionsV
 
     def __init_keywords(self):
@@ -86,7 +86,7 @@ class Project(object):
                 else:
                     raise FileNotFoundError('No such file or directory: {}'.format(images_file))
             Var.extensions_var['images_file'] = images_dict
-            log_info('image path: {}'.format(Var.extensions_var['images_file']))
+            log_info(' {}'.format(Var.extensions_var['images_file']))
 
     def __init_logging(self):
 
@@ -103,11 +103,13 @@ class Project(object):
 
         log_info('******************* analytical config *******************')
         for configK, configV in self.__config.items():
-            log_info('{}: {}'.format(configK, configV))
+            log_info(' {}: {}'.format(configK, configV))
         log_info('******************* analytical testcase *******************')
         testcase = TestCaseUtils()
         self.__testcase = testcase.testcase_path(Var.ROOT, Var.testcase)
-        log_info('testcase:{}'.format(self.__testcase))
+        if self.__testcase:
+            for case in self.__testcase:
+                log_info(' {}'.format(case))
 
     def __analytical_common_file(self):
 
@@ -119,7 +121,6 @@ class Project(object):
                 self.__load_common_func(rt, files)
             elif rt.split(os.sep)[-1].lower() == Var.platformName.lower():
                 self.__load_common_func(rt, files)
-        log_info('common: {}'.format(Var.common_func.keys()))
 
     def __load_common_func(self,rt ,files):
 
@@ -128,6 +129,7 @@ class Project(object):
                 continue
             for commonK, commonV in analytical_file(os.path.join(rt, f)).items():
                 Var.common_func[commonK] = commonV
+                log_info(' {}: {}'.format(commonK, commonV))
 
 
     def __init_testcase_suite(self):
@@ -142,12 +144,14 @@ class Project(object):
             Var.testcase = None
 
     def start(self):
-        server = ServerUtils(Var.browser, Var.browser_config)
-        Var.instance = server.start_server()
-        DriverBase.init()
+        if not Var.isReset:
+            server = ServerUtils(Var.browser, Var.browser_config)
+            Var.instance = server.start_server()
+            DriverBase.init()
 
         suite = unittest.TestSuite(tuple(self.__suite))
         runner = TestRunner()
         runner.run(suite)
 
-        server.stop_server()
+        if not Var.isReset:
+            server.stop_server(Var.instance)

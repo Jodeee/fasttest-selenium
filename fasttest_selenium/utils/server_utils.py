@@ -26,7 +26,7 @@ class ServerUtils(object):
                 if 'path' in self.browser_config.keys():
                     path = self.browser_config['path']
                     if not os.path.isfile(path):
-                        log_error('No such file : {}'.format(path), False)
+                        log_error(' No such file : {}'.format(path), False)
                         path = None
             if self.browser.lower() == 'chrome':
                 if path:
@@ -39,10 +39,10 @@ class ServerUtils(object):
         except Exception as e:
             raise e
 
-    def stop_server(self):
+    def stop_server(self, instance):
 
         try:
-            self.instance.quit()
+            instance.quit()
         except Exception as e:
             raise e
 

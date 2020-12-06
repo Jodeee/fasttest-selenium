@@ -1,8 +1,0 @@
-module: Element
-skip: false
-description: 元素相关操作
-steps:
-  - openUrl('https://www.baidu.com') # 打开URL
-
-
-
