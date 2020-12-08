@@ -34,24 +34,6 @@ class ActionAnalysis(object):
             raise KeyError(name)
         return object_var
 
-    def __join_value(self, contents, join):
-        '''
-        拼接字符串
-        :param contents:
-        :param join:
-        :return:
-        '''
-        content_str = None
-        if contents:
-            for content in contents:
-                if content_str:
-                    content_str = content_str + join +  self.__replace_string(content)
-                else:
-                    content_str = self.__replace_string(content)
-        else:
-            content_str = ''
-        return content_str
-
     def __replace_string(self, content):
         """
         字符串替换
@@ -120,7 +102,7 @@ class ActionAnalysis(object):
             try:
                 param = param_value[key]
             except Exception as e:
-                raise e
+                raise Exception('{}: {}'.format(param, e))
         else:
             param = self.__get_eval(param.strip())
         return param
@@ -192,8 +174,8 @@ class ActionAnalysis(object):
             else:
                 parms = self.__get_parms(var_value.split(key, 1)[-1])
         elif re.match(r'(\w)+\(.*\)', var_value):
-            key =  var_value.split('(', 1)[0]
-            parms = self.__get_replace_string(var_value.split(key, 1)[-1][1:-1])
+            key = var_value.split('(', 1)[0].strip()
+            parms = self.__get_parms(var_value.lstrip(key))
         else:
             key = None
             parms = [self.__get_params_type(var_value)]
@@ -259,7 +241,6 @@ class ActionAnalysis(object):
             elif action.key in Var.default_keywords_data:
                 result = self.action_executor.action_executor(action)
             elif action.key in Var.new_keywords_data:
-                action.parms = self.__join_value(action.parms, ', ')
                 result = self.action_executor.new_action_executor(action)
             else:
                 raise KeyError('The {} keyword is undefined!'.format(action.key))
@@ -277,6 +258,8 @@ class ActionAnalysis(object):
         self.common_var = common
         # 匹配关键字、解析参数
         action_dict = self.__match_keywords(step, style)
+        log_info(' --> key: {}'.format(action_dict['key']))
+        log_info(' --> value: {}'.format(action_dict['parms']))
         # 执行关键字
         result = self.executor_keywords(action_dict, style)
         return result

@@ -26,7 +26,7 @@ steps:
   - click('xpath=//*[@id="s-top-left"]/a[1]')
   # 获取当前窗口句柄
   - ${handle} = $.getCurrentWindowHandle()
-#  # 获取所有窗口句柄
+  # 获取所有窗口句柄
   - ${all_handle} = $.getWindowHandles()
   # 切换窗口句柄
   - switchToWindow(${all_handle}[1])

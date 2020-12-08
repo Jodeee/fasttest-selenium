@@ -32,15 +32,15 @@ class ActionExecutor(object):
         input result
         '''
         if isinstance(result, list):
-            log_info(f' {key}: --> {type(result)}')
+            log_info(f' <-- {key}: {type(result)}')
             for l in result:
-                log_info(' {}'.format(l))
+                log_info(' - {}'.format(l))
         elif isinstance(result, dict):
-            log_info(f' {key}: --> {type(result)}')
+            log_info(f' <-- {key}: {type(result)}')
             for k, v in result.items():
-                log_info(' {}: {}'.format(k, v))
+                log_info(' - {}: {}'.format(k, v))
         else:
-            log_info(f' {key}: --> {type(result)} {result}')
+            log_info(f' <-- {key}: {type(result)} {result}')
 
     def __get_element_info(self, action, index=0, is_return=False):
         '''
@@ -693,11 +693,7 @@ class ActionExecutor(object):
                 result = None
         elif action.key:
             # 调用脚本
-            list = self.__from_scripts_file()
-            for l in list:
-                exec(l)
-            func = f'{action.key}({action.parms})'
-            result = eval(func)
+            result = self.new_action_executor(action, False)
         else:
            result = action.parms[0]
 
@@ -750,23 +746,27 @@ class ActionExecutor(object):
             else:
                 isTrue = False
 
-            log_info(' ---> {}'.format(isTrue))
+            log_info(' <-- {}'.format(isTrue))
             if key == 'assert':
                 assert result
             return isTrue
         except Exception as e:
             raise e
 
-    def new_action_executor(self, action):
+    def new_action_executor(self, action, output=True):
         # 调用脚本
         if action.key:
             list = self.__from_scripts_file()
             for l in list:
                 exec(l)
-            # parms = repr(action.data["parms"][0])
-            func = f'{action.key}({action.parms})'
-            result = eval(func)
-            if result:
+            parms = None
+            for index, par in enumerate(action.parms):
+                if not parms:
+                    parms = 'action.parms[{}]'.format(index)
+                    continue
+                parms = '{}, action.parms[{}]'.format(parms, index)
+            result = eval('locals()[action.key]({})'.format(parms))
+            if result and output:
                 self.__out_result(action.key, result)
             return result
         else:
