@@ -33,8 +33,18 @@ class ServerUtils(object):
                     self.instance = webdriver.Chrome(path)
                 else:
                     self.instance = webdriver.Chrome()
-            elif self.browser.lower == 'safari':
-                pass
+            elif self.browser.lower() == 'firefox':
+                self.instance = webdriver.Firefox()
+            elif self.browser.lower() == 'edge':
+                self.instance = webdriver.Edge()
+            elif self.browser.lower() == 'safari':
+                self.instance = webdriver.Safari()
+            elif self.browser.lower() == 'ie':
+                self.instance = webdriver.Ie()
+            elif self.browser.lower() == 'opera':
+                self.instance = webdriver.Opera()
+            elif self.browser.lower() == 'phantomjs':
+                self.instance = webdriver.PhantomJS()
             return self.instance
         except Exception as e:
             raise e

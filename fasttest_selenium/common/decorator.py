@@ -32,7 +32,7 @@ def mach_keywords(func, *args, **kwds):
                 log_error(' screenshot failed!', False)
 
             stop_time = time.time()
-            duration = str('%.1f' % (stop_time - start_time))
+            duration = str('%.2f' % (stop_time - start_time))
 
             # call action中某一语句抛出异常，会导致call action状态也是false,需要处理
             result_exception_flag = False
@@ -74,16 +74,18 @@ def executor_keywords(func, *args, **kwds):
             exception_flag = True
         finally:
             try:
-                if Var.ocrimg is not None:
-                    cv2.imwrite(file, Var.ocrimg)
-                    Var.ocrimg = None
-                else:
+                # if Var.ocrimg is not None:
+                #     cv2.imwrite(file, Var.ocrimg)
+                #     Var.ocrimg = None
+                # else:
+                #     Var.instance.save_screenshot(file)
+                if Var.saveScreenshot or exception_flag:
                     Var.instance.save_screenshot(file)
             except:
                 log_error(' screenshot failed!', False)
 
             stop_time = time.time()
-            duration = str('%.1f' % (stop_time - start_time))
+            duration = str('%.2f' % (stop_time - start_time))
             # 获取变量值后需要替换掉原数据
             if action_tag == 'getVar':
                 step_ = action_step.split('=', 1)

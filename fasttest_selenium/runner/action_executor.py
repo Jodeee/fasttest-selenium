@@ -556,7 +556,6 @@ class ActionExecutor(object):
         :param :
         :return:
         '''
-        # todo
         width = self.__get_value(action)
         height = self.__get_value(action)
         DriverBase.set_window_size(float(width), float(height))
@@ -765,7 +764,10 @@ class ActionExecutor(object):
                     parms = 'action.parms[{}]'.format(index)
                     continue
                 parms = '{}, action.parms[{}]'.format(parms, index)
-            result = eval('locals()[action.key]({})'.format(parms))
+            if not parms:
+                result = eval('locals()[action.key]()')
+            else:
+                result = eval('locals()[action.key]({})'.format(parms))
             if result and output:
                 self.__out_result(action.key, result)
             return result

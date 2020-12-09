@@ -107,6 +107,7 @@ class Project(object):
         log_info('******************* analytical testcase *******************')
         testcase = TestCaseUtils()
         self.__testcase = testcase.testcase_path(Var.ROOT, Var.testcase)
+        log_info(' case: {}'.format(len(self.__testcase)))
         if self.__testcase:
             for case in self.__testcase:
                 log_info(' {}'.format(case))

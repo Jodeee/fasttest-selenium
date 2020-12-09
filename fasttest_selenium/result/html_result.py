@@ -163,6 +163,14 @@ class Template_mixin(object):
                                 </div>
                             </div>
     '''
+    CASE_NOT_SNAPSHOT_DIV = r'''
+                            <div class="result_css_Stepsdetails">
+                                <div class="result_css_steps" style="display: inline-block">
+                                        <pre class="result_css_StepsdetailsPre_duration">{runtime} | </pre>
+                                        <pre class="result_css_StepsdetailsPre {status}">{steps}</pre>
+                                </div>
+                            </div>
+    '''
     CASE_ERROR_DIV = r'''
                             <div class="result_css_Stepsdetails">
                                 <div class="result_css_steps" style="display: inline-block">
@@ -171,6 +179,17 @@ class Template_mixin(object):
                                 </div>
                                 <div class="img_errorp" style="display: none;">
                                     <img class="result_css_img" src="{image}">
+                                    <pre class="result_css_errorp" style="white-space: pre-wrap;overflow-wrap: break-word;">{errlist}</pre>
+                                </div>
+                            </div>
+    '''
+    CASE_NOT_ERROR_DIV = r'''
+                            <div class="result_css_Stepsdetails">
+                                <div class="result_css_steps" style="display: inline-block">
+                                        <pre class="result_css_StepsdetailsPre_duration">{runtime} | </pre>
+                                        <pre class="result_css_StepsdetailsPre {status}">{steps}</pre>
+                                </div>
+                                <div class="img_errorp" style="display: none;">
                                     <pre class="result_css_errorp" style="white-space: pre-wrap;overflow-wrap: break-word;">{errlist}</pre>
                                 </div>
                             </div>
@@ -328,7 +347,6 @@ class HTMLTestRunner(Template_mixin):
         module_name = testinfo.module_name
         err = '\n' + testinfo.test_exception_info if testinfo.test_exception_info else 'Nothing'
         if testinfo.snapshot_dir and os.path.exists(testinfo.snapshot_dir):
-            path = testinfo.snapshot_dir.split('Steps', 1)[-1]
             steps = ""
             result = os.path.join(testinfo.snapshot_dir,'result.log')
             if os.path.isfile(result):
@@ -340,38 +358,48 @@ class HTMLTestRunner(Template_mixin):
                 file_list = sort_string(file_list)
                 for out in file_list:
                     out_list = out.split('|:|')
+                    path = testinfo.snapshot_dir.split('Steps', 1)[-1]
                     f_path = 'Steps{}'.format(os.path.join(path, out_list[-2].replace('/', '&2F').replace('\\',
                                                                                                             '&5C').replace(
                         '*', '&2a').replace('\n', '')))
+                    file_path = os.path.join(testinfo.snapshot_dir, out_list[-2])
                     if len(out_list[2]) < 6:
                         runtime = '{}{}'.format(out_list[2],' ' * (6-len(out_list[2])))
                     else:
                         runtime = out_list[2]
                     if out_list[1] in 'True':
-                        case_snapshot = self.CASE_SNAPSHOT_DIV.format(
-                            status = 'result_css_successfont',
-                            runtime = runtime,
-                            steps = out_list[-1],
-                            image = f_path
-                        )
+                        if os.path.isfile(file_path):
+                            case_snapshot = self.CASE_SNAPSHOT_DIV.format(
+                                status='result_css_successfont',
+                                runtime=runtime,
+                                steps=out_list[-1],
+                                image=f_path
+                            )
+                        else:
+                            case_snapshot = self.CASE_NOT_SNAPSHOT_DIV.format(
+                                status='result_css_successfont',
+                                runtime=runtime,
+                                steps=out_list[-1]
+                            )
                     else:
-                        case_snapshot = self.CASE_ERROR_DIV.format(
-                            status = 'result_css_errorfont',
-                            runtime = runtime,
-                            steps = out_list[-1],
-                            image = f_path,
-                            errlist = err
-                        )
+                        if os.path.isfile(file_path):
+                            case_snapshot = self.CASE_ERROR_DIV.format(
+                                status='result_css_errorfont',
+                                runtime=runtime,
+                                steps=out_list[-1],
+                                image=f_path,
+                                errlist=err
+                            )
+                        else:
+                            case_snapshot = self.CASE_NOT_ERROR_DIV.format(
+                                status='result_css_errorfont',
+                                runtime=runtime,
+                                steps=out_list[-1],
+                                errlist=err
+                            )
 
 
                     steps = steps + case_snapshot
-            else:
-                case_snapshot = self.CASE_SNAPSHOT_DIV.format(
-                    status='result_css_skipped',
-                    runtime='0',
-                    steps='Nothing',
-                    image=''
-                )
 
             casedeta = self.CASE_DETA_SNAPSHOT.format(
                 module_name=module_name,

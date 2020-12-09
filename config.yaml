@@ -1,6 +1,7 @@
-driver: selenium
-browser: Chrome
-isReset: True
+driver: selenium # 驱动
+browser: Chrome # 浏览器
+isReset: True # 是否重置浏览器
+saveScreenshot: False # 是否保存截图
 desiredcaps:
     - chrome:
         - path: '/Users/xiongjunjie/Downloads/chromedriver'
@@ -10,4 +11,4 @@ desiredcaps:
           other: 'xx'
 
 testcase:
-    - TestCase/
+    - TestCase/common/common.yaml
