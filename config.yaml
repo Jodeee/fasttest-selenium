@@ -11,4 +11,4 @@ desiredcaps:
           other: 'xx'
 
 testcase:
-    - TestCase/common/common.yaml
+    - TestCase/
