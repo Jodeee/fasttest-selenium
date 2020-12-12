@@ -29,10 +29,7 @@ steps:
   - ${handle} = $.getCurrentWindowHandle()
   # 获取所有窗口句柄
   - ${all_handle} = $.getWindowHandles()
-  - ${len} = $.getLen(${all_handle})
-  - while ${len}:
-      - ${len} = $.id(${len}-1)
-      - ${handle} = ${all_handle}[${len}]
+  - for ${handle} in ${all_handle}:
       # 切换窗口句柄
       - switchToWindow(${handle})
       - ${title} = $.getTitle()

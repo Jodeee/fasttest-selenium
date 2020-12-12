@@ -103,12 +103,13 @@ def executor_keywords(func, *args, **kwds):
 
             if result is not None:
                 # if while 等需要把结果放在语句后面
-                result_step = '{}|:|{}|:|{}s|:|{}|:|{}: --> {}\n'.format(snapshot_index, result_exception_flag,
+                result_step = '{}|:|{}|:|{}s|:|{}|:|{}: --> {}'.format(snapshot_index, result_exception_flag,
                                                                          duration,
                                                                          imagename, f'{style}- {action_step}', result)
             else:
-                result_step = '{}|:|{}|:|{}s|:|{}|:|{}\n'.format(snapshot_index, result_exception_flag, duration,
+                result_step = '{}|:|{}|:|{}s|:|{}|:|{}'.format(snapshot_index, result_exception_flag, duration,
                                                                  imagename, f'{style}- {action_step}')
+            result_step = '{}\n'.format(result_step.replace('\n', ''))
             with open(os.path.join(Var.snapshot_dir, 'result.log'), 'a') as f:
                 f.write(result_step)
 

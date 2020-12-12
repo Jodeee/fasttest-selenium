@@ -2,6 +2,8 @@ driver: selenium # 驱动
 browser: Chrome # 浏览器
 isReset: True # 是否重置浏览器
 saveScreenshot: False # 是否保存截图
+implicitlyWait: 10 # 隐式等待时间
+maxWindow: True # 窗口最大化
 desiredcaps:
     - chrome:
         - path: '/Users/xiongjunjie/Downloads/chromedriver'

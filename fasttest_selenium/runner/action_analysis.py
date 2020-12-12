@@ -11,6 +11,7 @@ class ActionAnalysis(object):
 
     def __init__(self):
         self.variables = {}
+        self.for_variables = {}
         self.action_executor = ActionExecutor()
 
     def __get_variables(self, name):
@@ -22,7 +23,9 @@ class ActionAnalysis(object):
         if not re.match(r'^\${(\w+)}$', name):
             raise SyntaxError(name)
         name = name[2:-1]
-        if name in self.common_var.keys():
+        if name in self.for_variables.keys():
+            object_var = self.for_variables[name]
+        elif name in self.common_var.keys():
             object_var = self.common_var[name]
         elif name in self.variables:
             object_var = self.variables[name]
@@ -46,7 +49,7 @@ class ActionAnalysis(object):
             elif  re.match(r'^"(.*)"$', content):
                 content = "'{}'".format(content)
             else:
-                content = '\'{}\''.format(content)
+                content = '"{}"'.format(content)
         else:
             content = str(content)
         return content
@@ -71,7 +74,7 @@ class ActionAnalysis(object):
                         elif re.search(r'(".*?")', search_name):
                             search_name = '\'{}\''.format(search_name)
                         else:
-                            search_name = '\'{}\''.format(search_name)
+                            search_name = '"{}"'.format(search_name)
                     else:
                         search_name = str(search_name)
                     content = content[0:search_contains.span()[0]] + search_name + content[search_contains.span()[1]:]
@@ -121,7 +124,7 @@ class ActionAnalysis(object):
 
     def __get_parms(self, parms):
         '''
-        获取参数,传参非（）形式
+        获取参数,传参（）形式
         :param parms:
         :return:
         '''
@@ -212,6 +215,26 @@ class ActionAnalysis(object):
         })
         return action_data
 
+    def __analysis_for_keywords(self, step):
+        f_p =  re.search(r'for\s+(\$\{\w+\})\s+in\s+(\S+)', step)
+        f_t = f_p.groups()
+        if len(f_t) != 2:
+            raise SyntaxError(f'"{step}"')
+
+        # 迭代值
+        iterating = f_t[0][2:-1]
+        # 迭代对象
+        parms =  [self.__get_params_type(f_t[1])]
+
+        action_data = Dict({
+            'key': 'for in',
+            'parms': parms,
+            'var': iterating,
+            'tag': 'for',
+            'step': f'for {f_t[0]} in {parms}'
+        })
+        return action_data
+
     @mach_keywords
     def __match_keywords(self, step, style):
 
@@ -229,6 +252,8 @@ class ActionAnalysis(object):
             return self.__analysis_common_keywords(step, style)
         elif re.match(r'if |elif |while |assert .+', step):
             return self.__analysis_other_keywords(step)
+        elif re.match(r'for\s+(\$\{\w+\})\s+in\s+(\S+)+', step):
+            return self.__analysis_for_keywords(step)
         else:
             raise SyntaxError(f'"{step}"')
 
@@ -236,7 +261,7 @@ class ActionAnalysis(object):
     def executor_keywords(self, action, style):
 
         try:
-            if action.tag in ['getVar', 'call', 'other']:
+            if action.tag in ['getVar', 'call', 'other', 'for']:
                 result = self.action_executor.action_executor(action)
             elif action.key in Var.default_keywords_data:
                 result = self.action_executor.action_executor(action)
@@ -246,15 +271,26 @@ class ActionAnalysis(object):
                 raise KeyError('The {} keyword is undefined!'.format(action.key))
 
             if action.tag == 'getVar':
+                # 变量赋值
                 self.variables[action.name] = result
-                return result
-            else:
-                return result
+            return result
         except Exception as e:
             raise e
 
-    def action_analysis(self, step, style, common):
+    def action_analysis(self, step, style, common, iterating_var):
+        '''
+        @param step: 执行步骤
+        @param style: 缩进
+        @param common: call 所需参数
+        @param iterating_var: for 迭代值
+        @return:
+        '''
         log_info(' {}'.format(step))
+        if not iterating_var:
+            self.for_variables = {}
+        else:
+            self.for_variables.update(iterating_var)
+            log_info(' --> {}'.format(self.for_variables))
         self.common_var = common
         # 匹配关键字、解析参数
         action_dict = self.__match_keywords(step, style)

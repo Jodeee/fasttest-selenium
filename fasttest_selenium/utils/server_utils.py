@@ -13,10 +13,16 @@ class ServerUtils(object):
         except:
             return None
 
-    def __init__(self, browser, browser_config):
+    def __init__(self, browser, browser_config, implicitly_wait, max_window):
         self.browser = browser
         self.instance = None
         self.browser_config = browser_config
+        if implicitly_wait is None :
+            implicitly_wait = 5
+        self.implicitly_wait = implicitly_wait
+        if max_window is None:
+            max_window = False
+        self.max_window = max_window
 
     def start_server(self):
 
@@ -45,6 +51,10 @@ class ServerUtils(object):
                 self.instance = webdriver.Opera()
             elif self.browser.lower() == 'phantomjs':
                 self.instance = webdriver.PhantomJS()
+
+            self.instance.implicitly_wait(self.implicitly_wait)
+            if self.max_window:
+                self.instance.maximize_window()
             return self.instance
         except Exception as e:
             raise e

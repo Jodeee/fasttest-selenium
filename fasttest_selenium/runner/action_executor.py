@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import time
+from collections import Iterable
 from selenium.webdriver.remote.webelement import WebElement
 from fasttest_selenium.common import Var, log_info, log_error
 from fasttest_selenium.drivers.driver_base import DriverBase
@@ -283,19 +284,6 @@ class ActionExecutor(object):
         xoffset = self.__get_value(action, 1)
         yoffset = self.__get_value(action, 2)
         DriverBase.move_to_element_with_offset(element, float(xoffset), float(yoffset))
-
-    def __action_key_down_and_key_up(self, action):
-        '''
-        keyDown 废弃
-        :param action:
-        :return:
-        '''
-        parms = self.__get_value(action, 0)
-        if isinstance(parms, str):
-            parms = eval(parms)
-        if not isinstance(parms, dict):
-            raise TypeError('the parms type must be: dict')
-        DriverBase.key_down_and_key_up(parms)
 
     def __action_switch_to_frame(self, action):
         '''
@@ -679,6 +667,7 @@ class ActionExecutor(object):
         elif action.key == '$.getElements':
             result = self.__action_get_elements(action)
         elif action.key == '$.id':
+            action.parms = action.parms.replace('\n', '')
             result = eval(action.parms)
         elif action.key == '$.getLen':
             result = self.__action_len(action)
@@ -739,6 +728,7 @@ class ActionExecutor(object):
         key = action.key
         parms = action.parms
         try:
+            parms = parms.replace('\n', '')
             result = eval(parms)
             if result:
                 isTrue = True
@@ -751,6 +741,16 @@ class ActionExecutor(object):
             return isTrue
         except Exception as e:
             raise e
+
+    def __action_for(self, action):
+        '''
+        :return:
+        '''
+        value = self.__get_value(action)
+        var = action.var
+        if not isinstance(value, Iterable):
+            raise TypeError(f"'{value}' object is not iterable")
+        return {'key': var, 'value': value}
 
     def new_action_executor(self, action, output=True):
         # 调用脚本
@@ -788,6 +788,9 @@ class ActionExecutor(object):
 
         elif action.tag and action.tag == 'other':
             result = self.__action_other(action)
+
+        elif action.tag and action.tag == 'for':
+            result = self.__action_for(action)
 
         elif action.key == 'setVar':
             result = self.__action_set_var(action)
