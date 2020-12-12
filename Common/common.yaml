@@ -1,7 +1,0 @@
-common_action:
- description: 公共方法
- input: [value]
- output: []
- steps:
-    - moveToElement(${value})
-    - sleep(5)

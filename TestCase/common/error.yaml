@@ -1,6 +1,0 @@
-module: common
-skip: false
-description: 错误场景
-steps:
-  # 不存在的关键字
-  - error()
