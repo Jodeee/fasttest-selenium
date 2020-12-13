@@ -530,6 +530,24 @@ class ActionExecutor(object):
         js_value = self.__get_value(action)
         DriverBase.execute_script(js_value)
 
+    def __action_match_image(self, action):
+        '''
+        matchImage
+        :param :
+        :return:
+        '''
+        base_image = self.__get_value(action)
+        match_image = self.__get_value(action,1)
+        if match_image not in Var.extensions_var['images_file'].keys():
+            raise FileNotFoundError("No such file: {}".format(match_image))
+        img_file = Var.extensions_var['images_file'][match_image]
+        orc_img = OpencvUtils(base_image, img_file)
+        img_info = orc_img.extract_minutiae()
+        if img_info:
+            Var.ocrimg = img_info['ocrimg']
+        else:
+            raise Exception("Can't find image {}".format(match_image))
+
     def __action_get_window_size(self):
         '''
         getWindowSize
@@ -594,27 +612,6 @@ class ActionExecutor(object):
         """
         sleep = self.__get_value(action)
         time.sleep(float(sleep))
-
-    def __ocr_analysis(self, action, element, israise):
-        """
-        :param action:
-        :param element:
-        :return:
-        """
-        if element not in Var.extensions_var['images_file'].keys():
-            return False
-        time.sleep(5)
-        img_file = Var.extensions_var['images_file'][element]
-        orcimg = OpencvUtils(action, img_file)
-        orcimg.save_screenshot()
-        img_info = orcimg.extract_minutiae()
-        if img_info:
-            return img_info
-        else:
-            if israise:
-                raise Exception("Can't find element {}".format(element))
-            else:
-                return None
 
     def __action_getVar(self, action):
         '''
@@ -867,9 +864,6 @@ class ActionExecutor(object):
         elif action.key == 'moveToElementWithOffset':
             result = self.__action_move_to_element_with_offset(action)
 
-        elif action.key == 'keyDownAndkeyUp':
-            result = self.__action_key_down_and_key_up(action)
-
         elif action.key == 'switchToFrame':
             result = self.__action_switch_to_frame(action)
 
@@ -890,6 +884,9 @@ class ActionExecutor(object):
 
         elif action.key == 'executeScript':
             result = self.__action_execute_script(action)
+
+        elif action.key == 'matchImage':
+            result = self.__action_match_image(action)
 
         elif action.key == 'sendKeys':
             result = self.__action_send_keys(action)

@@ -3,10 +3,14 @@
 import os
 import sys
 import logging
+import platform
+from colorama import init, Fore, Back, Style
 from logging.handlers import RotatingFileHandler
 
 logger = None
-
+if platform.system() != 'Windows':
+    init(wrap=True)
+init(autoreset=True)
 def log_init(report):
     global logger
 
@@ -33,15 +37,18 @@ def log_init(report):
     rh.setLevel(logging.INFO)
     logger.info('init...')
 
-def log_info(message):
+def log_info(message,color=None):
     try:
-        logger.info(message)
+        if color:
+            logger.info(color + message)
+        else:
+            logger.info(message)
     except:
         print(message)
 
 def log_error(message, exit=True):
     try:
-        logger.error(message)
+        logger.error(Fore.RED + message)
         if exit:
             os._exit(0)
     except:

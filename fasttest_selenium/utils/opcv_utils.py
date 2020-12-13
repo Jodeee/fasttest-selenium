@@ -7,28 +7,11 @@ from fasttest_selenium.common import Var
 
 class OpencvUtils(object):
 
-    def __init__(self,action, matchimage):
+    def __init__(self,baseimage, matchimage):
 
-        self.action = action
-        self.baseimage = None
+        self.baseimage = baseimage
         self.matchimage = matchimage
         self.iszoom = False
-
-    def save_screenshot(self):
-        """
-        截图
-        :return:
-        """
-        try:
-            ocrimg = os.path.join(Var.ROOT, 'OcrImg')
-            if not os.path.exists(ocrimg):
-                os.makedirs(ocrimg)
-            imgname = self.matchimage.split(os.sep)[-1]
-            file_path = os.path.join(ocrimg, '{}_{}'.format(self.action, imgname))
-            Var.instance.save_screenshot(file_path)
-            self.baseimage = file_path
-        except Exception as e:
-            raise e
 
     def extract_minutiae(self):
         """
@@ -72,7 +55,7 @@ class OpencvUtils(object):
                 maxMatch = matchePoints[i].distance
         if minMatch > 0.2:
             return None
-        # #获取排雷在前边的几个最优匹配结果
+        # #获取排列在前边的几个最优匹配结果
         DMatch = None
         MatchePoints = []
         for i in range(len(matchePoints)):

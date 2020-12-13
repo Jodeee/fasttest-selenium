@@ -36,6 +36,7 @@ def return_keywords():
         "setWindowSize",  # 设置窗口大小
         "setWindowPosition",  # 设置设置窗口位置
         "executeScript", # 执行JS
+        "matchImage", # 匹配图片
         "$.saveScreenshot", # 截图
         "$.isSelected",  # 判断是否选中
         "$.isDisplayed",  # 判断元素是否显示

@@ -74,14 +74,13 @@ def executor_keywords(func, *args, **kwds):
             exception_flag = True
         finally:
             try:
-                # if Var.ocrimg is not None:
-                #     cv2.imwrite(file, Var.ocrimg)
-                #     Var.ocrimg = None
-                # else:
-                #     Var.instance.save_screenshot(file)
-                if Var.saveScreenshot or exception_flag:
+                if Var.ocrimg is not None:
+                    cv2.imwrite(file, Var.ocrimg)
+                    Var.ocrimg = None
+                elif Var.saveScreenshot or exception_flag:
                     Var.instance.save_screenshot(file)
             except:
+                Var.ocrimg = None
                 log_error(' screenshot failed!', False)
 
             stop_time = time.time()

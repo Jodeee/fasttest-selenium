@@ -3,6 +3,7 @@
 import os
 import re
 import json
+from colorama import Fore, Back, Style
 from fasttest_selenium.common import Var, Dict, log_info
 from fasttest_selenium.common.decorator import mach_keywords, executor_keywords
 from fasttest_selenium.runner.action_executor import ActionExecutor
@@ -285,7 +286,7 @@ class ActionAnalysis(object):
         @param iterating_var: for 迭代值
         @return:
         '''
-        log_info(' {}'.format(step))
+        log_info(' {}'.format(step), Fore.GREEN)
         if not iterating_var:
             self.for_variables = {}
         else:
