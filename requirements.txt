@@ -1,2 +1,3 @@
 PyYAML>=5.1.2
 opencv-contrib-python==3.4.2.16
+colorama>=0.4.4
