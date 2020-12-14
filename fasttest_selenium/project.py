@@ -45,7 +45,7 @@ class Project(object):
         for configK, configV in self.__config.items():
              Var[configK] = configV
 
-        if Var.browser.lower() not in ['chrome', 'safari']:
+        if Var.browser.lower() not in ['chrome', 'safari', 'firefox', 'ie', 'opera', 'phantomjs']:
             raise ValueError('browser parameter is illegal!')
 
         browser_config = None

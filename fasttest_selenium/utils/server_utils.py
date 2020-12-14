@@ -40,17 +40,32 @@ class ServerUtils(object):
                 else:
                     self.instance = webdriver.Chrome()
             elif self.browser.lower() == 'firefox':
-                self.instance = webdriver.Firefox()
+                if path:
+                    self.instance = webdriver.Firefox(executable_path=path)
+                else:
+                    self.instance = webdriver.Firefox()
             elif self.browser.lower() == 'edge':
-                self.instance = webdriver.Edge()
+                if path:
+                    self.instance = webdriver.Edge(executable_path=path)
+                else:
+                    self.instance = webdriver.Edge()
             elif self.browser.lower() == 'safari':
                 self.instance = webdriver.Safari()
             elif self.browser.lower() == 'ie':
-                self.instance = webdriver.Ie()
+                if path:
+                    self.instance = webdriver.Ie(executable_path=path)
+                else:
+                    self.instance = webdriver.Ie()
             elif self.browser.lower() == 'opera':
-                self.instance = webdriver.Opera()
+                if path:
+                    self.instance = webdriver.Opera(executable_path=path)
+                else:
+                    self.instance = webdriver.Opera()
             elif self.browser.lower() == 'phantomjs':
-                self.instance = webdriver.PhantomJS()
+                if path:
+                    self.instance = webdriver.PhantomJS(executable_path=path)
+                else:
+                    self.instance = webdriver.PhantomJS()
 
             self.instance.implicitly_wait(self.implicitly_wait)
             if self.max_window:
