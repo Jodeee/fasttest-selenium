@@ -549,11 +549,14 @@ class DriverBase(object):
         :return:
         '''
         try:
-            image_dir = os.path.join(Var.report, 'screenshot')
+            image_dir = os.path.join(Var.snapshot_dir, 'screenshot')
             if not os.path.exists(image_dir):
                 os.makedirs(image_dir)
             image_path = os.path.join(image_dir, '{}'.format(name))
-            element.screenshot(image_path)
+            if element:
+                element.screenshot(image_path)
+            else:
+                driver.save_screenshot(image_path)
         except Exception as e:
             raise e
         return image_path

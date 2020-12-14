@@ -350,8 +350,12 @@ class ActionExecutor(object):
         :param action:
         :return:
         '''
-        element = self.__get_element_info(action)
-        name = self.__get_value(action, 1)
+        if len(action.parms) == 1:
+            element = None
+            name = self.__get_value(action)
+        else:
+            element = self.__get_element_info(action)
+            name = self.__get_value(action, 1)
         return DriverBase.save_screenshot(element, name)
 
     def __action_is_selected(self, action):

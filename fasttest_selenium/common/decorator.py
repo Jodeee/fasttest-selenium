@@ -75,9 +75,14 @@ def executor_keywords(func, *args, **kwds):
         finally:
             try:
                 if Var.ocrimg is not None:
+                    # matchImage，绘制图片
                     cv2.imwrite(file, Var.ocrimg)
                     Var.ocrimg = None
-                elif Var.saveScreenshot or exception_flag:
+                elif Var.saveScreenshot:
+                    # 全局参数
+                    Var.instance.save_screenshot(file)
+                elif not Var.exception_flag and exception_flag:
+                    # call出现异常
                     Var.instance.save_screenshot(file)
             except:
                 Var.ocrimg = None
