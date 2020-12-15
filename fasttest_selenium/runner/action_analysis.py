@@ -232,7 +232,7 @@ class ActionAnalysis(object):
             'parms': parms,
             'var': iterating,
             'tag': 'for',
-            'step': f'for {f_t[0]} in {parms}'
+            'step': f'for {f_t[0]} in {self.__get_params_type(f_t[1])}'
         })
         return action_data
 
