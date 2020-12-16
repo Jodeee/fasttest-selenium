@@ -19,7 +19,7 @@ class ActionExecutor(object):
         try:
             for rt, dirs, files in os.walk(os.path.join(Var.ROOT, "Scripts")):
                 for f in files:
-                    if f == "__init__.py" or f.endswith("pyc") or f.startswith("."):
+                    if f == "__init__.py" or f.endswith(".pyc") or f.startswith(".") or not f.endswith('.py'):
                         continue
                     file_list.append(f'from Scripts.{f[:-3]} import *')
 
