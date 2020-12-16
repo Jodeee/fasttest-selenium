@@ -1,4 +1,6 @@
 ## fasttest_selenium
+### idea
+- 能否同时运行多个不同的浏览器，解决兼容性测试问题
 ### Demo
 https://github.com/Jodeee/fasttestSeleniumDemo
 
