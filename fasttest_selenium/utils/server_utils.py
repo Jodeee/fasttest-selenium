@@ -39,8 +39,9 @@ class ServerUtils(object):
                 options = webdriver.ChromeOptions()
                 if self.browser_options:
                     if 'options' in self.browser_options.keys():
-                        for opt in self.browser_options['options']:
-                            options.add_argument(opt)
+                        if self.browser_options['options']:
+                            for opt in self.browser_options['options']:
+                                options.add_argument(opt)
                 if path:
                     self.instance = webdriver.Chrome(executable_path=path,
                                                      chrome_options=options)
@@ -50,8 +51,9 @@ class ServerUtils(object):
                 options = webdriver.FirefoxOptions()
                 if self.browser_options:
                     if 'options' in self.browser_options.keys():
-                        for opt in self.browser_options['options']:
-                            options.add_argument(opt)
+                        if self.browser_options['options']:
+                            for opt in self.browser_options['options']:
+                                options.add_argument(opt)
                 if path:
                     self.instance = webdriver.Firefox(executable_path=path,
                                                       firefox_options=options)
