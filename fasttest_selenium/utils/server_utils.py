@@ -5,6 +5,7 @@ from selenium import webdriver
 from fasttest_selenium.common import *
 
 
+
 class ServerUtils(object):
 
     def __getattr__(self, item):
@@ -13,10 +14,10 @@ class ServerUtils(object):
         except:
             return None
 
-    def __init__(self, browser, browser_config, implicitly_wait, max_window):
+    def __init__(self, browser, browser_options, implicitly_wait, max_window):
         self.browser = browser
         self.instance = None
-        self.browser_config = browser_config
+        self.browser_options = browser_options
         if implicitly_wait is None :
             implicitly_wait = 5
         self.implicitly_wait = implicitly_wait
@@ -28,22 +29,34 @@ class ServerUtils(object):
 
         try:
             path = None
-            if self.browser_config:
-                if 'path' in self.browser_config.keys():
-                    path = self.browser_config['path']
+            if self.browser_options:
+                if 'path' in self.browser_options.keys():
+                    path = self.browser_options['path']
                     if not os.path.isfile(path):
                         log_error(' No such file : {}'.format(path), False)
                         path = None
             if self.browser.lower() == 'chrome':
+                options = webdriver.ChromeOptions()
+                if self.browser_options:
+                    if 'options' in self.browser_options.keys():
+                        for opt in self.browser_options['options']:
+                            options.add_argument(opt)
                 if path:
-                    self.instance = webdriver.Chrome(path)
+                    self.instance = webdriver.Chrome(executable_path=path,
+                                                     chrome_options=options)
                 else:
-                    self.instance = webdriver.Chrome()
+                    self.instance = webdriver.Chrome(chrome_options=options)
             elif self.browser.lower() == 'firefox':
+                options = webdriver.FirefoxOptions()
+                if self.browser_options:
+                    if 'options' in self.browser_options.keys():
+                        for opt in self.browser_options['options']:
+                            options.add_argument(opt)
                 if path:
-                    self.instance = webdriver.Firefox(executable_path=path)
+                    self.instance = webdriver.Firefox(executable_path=path,
+                                                      firefox_options=options)
                 else:
-                    self.instance = webdriver.Firefox()
+                    self.instance = webdriver.Firefox(firefox_options=options)
             elif self.browser.lower() == 'edge':
                 if path:
                     self.instance = webdriver.Edge(executable_path=path)

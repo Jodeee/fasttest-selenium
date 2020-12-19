@@ -48,12 +48,12 @@ class Project(object):
         if Var.browser.lower() not in ['chrome', 'safari', 'firefox', 'ie', 'opera', 'phantomjs']:
             raise ValueError('browser parameter is illegal!')
 
-        browser_config = None
+        browser_options = None
         if 'desiredcaps' in self.__config.keys():
             desiredcaps = self.__config['desiredcaps'][0]
             if Var.browser.lower() in desiredcaps.keys():
-                browser_config = Dict(desiredcaps[Var.browser.lower()][0])
-        Var.browser_config = browser_config
+                browser_options = Dict(desiredcaps[Var.browser.lower()][0])
+        Var.browser_options = browser_options
 
 
     def __init_data(self):
@@ -152,7 +152,7 @@ class Project(object):
 
     def start(self):
         if not Var.isReset:
-            server = ServerUtils(Var.browser, Var.browser_config, Var.implicitlyWait, Var.maxWindow)
+            server = ServerUtils(Var.browser, Var.browser_options, Var.implicitlyWait, Var.maxWindow)
             Var.instance = server.start_server()
             DriverBase.init()
 
