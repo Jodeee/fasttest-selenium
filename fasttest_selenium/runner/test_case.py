@@ -23,6 +23,8 @@ class TestCase(unittest.TestCase):
         for key, value in Var.testcase.items():
             setattr(self, key, value)
         self.snapshot_dir = os.path.join(Var.report,'Steps', self.module, self.testcase_path.split('/')[-1].split(os.sep)[-1].split(".")[0])
+        self.report = Var.report
+
     def run(self, result=None):
 
         try:

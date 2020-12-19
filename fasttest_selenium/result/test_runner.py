@@ -45,6 +45,7 @@ class TestRunner(unittest.TextTestRunner):
                                      title='Test Results',
                                      description='Test')
         html_runner.generateReport(result,starTime,stopTime)
+        Var.all_result = result
         fp.close()
 
         return result

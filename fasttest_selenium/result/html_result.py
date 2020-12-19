@@ -207,6 +207,7 @@ class HTMLTestRunner(Template_mixin):
         self.description = description if description else self.DEFAULT_DESCRIPTION
 
     def generateReport(self,result,starttime,stoptime):
+        # 获取头部数据
         report_attrs = self._getReportAttributes(result, starttime, stoptime)
         report = self._generate_report(result)
         heading = self._generate_heading(report_attrs)
@@ -234,36 +235,37 @@ class HTMLTestRunner(Template_mixin):
         return (Total,Success,Failure,Error,skipped,startTime,duration)
 
     def _generate_report(self, result):
-
-        sortedResult = self.sortResult(result.result)
+        '''
+        解析结果
+        :param result:
+        :return:
+        '''
         table_lsit = []
-        for cid, (cls, cls_results) in enumerate(sortedResult):
-            module_name = cls
-            status_list = ['success','failure','error','skipped']
+        for module_name, module_list in result.result.items():
             success = 0
             failure = 0
             error = 0
             skipped = 0
-
             cls_list = []
-            for tup_result in cls_results:
-                _status = tup_result[0]
-                testinfo = tup_result[1]
+            for test_info in module_list:
+                # case模块
+                case_module = self._generate_case(test_info)
+                cls_list.append(case_module)
 
-                caseinfo = self._generate_case(testinfo, status_list[_status])
-                cls_list.append(caseinfo)
+                # 具体case
+                status = test_info.status
+                if status != 3: # skip
+                    case_deta = self._generate_case_deta(test_info)
+                    cls_list.append(case_deta)
 
-                if _status != 3: # 跳过
-                    casedeta = self._generate_case_deta(testinfo)
-                    cls_list.append(casedeta)
-
-                if _status == 0:
+                # 统计结果
+                if status == 0:
                     success += 1
-                elif _status == 1:
+                elif status == 1:
                     failure += 1
-                elif _status == 2:
+                elif status == 2:
                     error += 1
-                elif _status == 3:
+                elif status == 3:
                     skipped += 1
 
             module_name = self.MODULE_NAME.format(
@@ -279,30 +281,10 @@ class HTMLTestRunner(Template_mixin):
             for tr in cls_list:
                 table_lsit.append(tr)
 
-
         tr_ = ''
         for tr in table_lsit:
             tr_ = tr_ + tr
         return tr_
-
-
-    def sortResult(self,result_list):
-
-        rmap = {}
-        classes = []
-        for n, t, o in result_list:
-            cls = t.module_name
-            if str(cls).count(".") == 0:
-                cls = cls
-            else:
-                cls = ".".join(cls.split(".")[:-1])
-            if not cls in rmap:
-                rmap[cls] = []
-                classes.append(cls)
-            rmap[cls].append((n, t, o))
-        r = [(cls, rmap[cls]) for cls in classes]
-        return r
-
 
     def _generate_heading(self,report_attrs):
 
@@ -319,9 +301,15 @@ class HTMLTestRunner(Template_mixin):
             )
             return heading
 
-    def _generate_case(self,testinfo,status):
-
+    def _generate_case(self,testinfo):
+        '''
+        module 样式
+        :param testinfo:
+        :return:
+        '''
+        status_list = ['success', 'failure', 'error', 'skipped']
         casename = testinfo.casename
+        status = status_list[testinfo.status]
         description = testinfo.description
         startTime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(testinfo.start_time))
         duration = str(int(testinfo.stop_time - testinfo.start_time)) + 's'
@@ -341,72 +329,63 @@ class HTMLTestRunner(Template_mixin):
         )
         return caseinfo
 
-    def _generate_case_deta(self,testinfo):
-        dataId = testinfo.dataId
-        steps = testinfo.stdout
-        module_name = testinfo.module_name
-        err = '\n' + testinfo.test_exception_info if testinfo.test_exception_info else 'Nothing'
-        if testinfo.snapshot_dir and os.path.exists(testinfo.snapshot_dir):
-            steps = ""
-            result = os.path.join(testinfo.snapshot_dir,'result.log')
-            if os.path.isfile(result):
-                file_list = []
-                with open(result, 'r') as f:
-                    for line in f:
-                        file_list.append(line.strip())
-
-                file_list = sort_string(file_list)
-                for out in file_list:
-                    out_list = out.split('|:|')
-                    path = testinfo.snapshot_dir.split('Steps', 1)[-1]
-                    f_path = 'Steps{}'.format(os.path.join(path, out_list[-2].replace('/', '&2F').replace('\\',
-                                                                                                            '&5C').replace(
-                        '*', '&2a').replace('\n', '')))
-                    file_path = os.path.join(testinfo.snapshot_dir, out_list[-2])
-                    if len(out_list[2]) < 6:
-                        runtime = '{}{}'.format(out_list[2],' ' * (6-len(out_list[2])))
+    def _generate_case_deta(self,test_info):
+        '''
+        具体case
+        :param testinfo:
+        :return:
+        '''
+        dataId = test_info.dataId
+        module_name = test_info.module_name
+        err = '\n' + test_info.err if test_info.err else 'Nothing'
+        run_time = str('%.2f' % (test_info.stop_time - test_info.start_time))
+        steps = ""
+        if os.path.exists(test_info.snapshot_dir):
+            for key in sorted(test_info.test_case_steps):
+                value = test_info.test_case_steps[key]
+                step = value['step'].replace('\n', '')
+                if value['result']:
+                    step = '{} --> {}'.format(value['step'], value['result']).replace('\n', '')
+                image_path = value['snapshot'].split(test_info.report)[-1]
+                image_path = image_path.lstrip(os.sep)
+                if value['status']:
+                    if os.path.isfile(value['snapshot']):
+                        case_snapshot = self.CASE_SNAPSHOT_DIV.format(
+                            status='result_css_successfont',
+                            runtime=run_time,
+                            steps=step,
+                            image=image_path
+                        )
                     else:
-                        runtime = out_list[2]
-                    if out_list[1] in 'True':
-                        if os.path.isfile(file_path):
-                            case_snapshot = self.CASE_SNAPSHOT_DIV.format(
-                                status='result_css_successfont',
-                                runtime=runtime,
-                                steps=out_list[-1],
-                                image=f_path
-                            )
-                        else:
-                            case_snapshot = self.CASE_NOT_SNAPSHOT_DIV.format(
-                                status='result_css_successfont',
-                                runtime=runtime,
-                                steps=out_list[-1]
-                            )
+                        case_snapshot = self.CASE_NOT_SNAPSHOT_DIV.format(
+                            status='result_css_successfont',
+                            runtime=run_time,
+                            steps=step
+                        )
+                else:
+                    if os.path.isfile(value['snapshot']):
+                        case_snapshot = self.CASE_ERROR_DIV.format(
+                            status='result_css_errorfont',
+                            runtime=run_time,
+                            steps=step,
+                            image=image_path,
+                            errlist=err
+                        )
                     else:
-                        if os.path.isfile(file_path):
-                            case_snapshot = self.CASE_ERROR_DIV.format(
-                                status='result_css_errorfont',
-                                runtime=runtime,
-                                steps=out_list[-1],
-                                image=f_path,
-                                errlist=err
-                            )
-                        else:
-                            case_snapshot = self.CASE_NOT_ERROR_DIV.format(
-                                status='result_css_errorfont',
-                                runtime=runtime,
-                                steps=out_list[-1],
-                                errlist=err
-                            )
+                        case_snapshot = self.CASE_NOT_ERROR_DIV.format(
+                            status='result_css_errorfont',
+                            runtime=run_time,
+                            steps=step,
+                            errlist=err
+                        )
 
-
-                    steps = steps + case_snapshot
+                steps = steps + case_snapshot
 
             casedeta = self.CASE_DETA_SNAPSHOT.format(
                 module_name=module_name,
                 dataId=dataId,
                 steplist=steps,
             )
-
         else:
             casedeta = self.CASE_DETA_NOT_SNAPSHOT.format(
                 module_name=module_name,

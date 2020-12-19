@@ -156,3 +156,5 @@ class Project(object):
 
         if not Var.isReset:
             server.stop_server(Var.instance)
+
+        return Var.all_result

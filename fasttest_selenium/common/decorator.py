@@ -2,11 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import cv2
-import sys
 import time
-import traceback
-import threading
-from macaca.webdriver import WebElement
 from fasttest_selenium.common import *
 
 def mach_keywords(func, *args, **kwds):
@@ -35,15 +31,18 @@ def mach_keywords(func, *args, **kwds):
             duration = str('%.2f' % (stop_time - start_time))
 
             # call action中某一语句抛出异常，会导致call action状态也是false,需要处理
-            result_exception_flag = False
+            status = False
             if Var.exception_flag:
-                result_exception_flag = True
+                status = True
 
-            result_step = '{}|:|{}|:|{}s|:|{}|:|{}\n'.format(snapshot_index, result_exception_flag, duration,
-                                                             imagename, f'{style}- {action_step}')
-            with open(os.path.join(Var.snapshot_dir, 'result.log'), 'a') as f:
-                f.write(result_step)
-
+            Var.test_case_steps[str(snapshot_index)] = {
+                'index': snapshot_index,
+                'status': status,
+                'duration': duration,
+                'snapshot': file,
+                'step': f'{style}- {action_step}',
+                'result': result if result is not None else ''
+            }
             raise e
 
         return result
@@ -93,30 +92,26 @@ def executor_keywords(func, *args, **kwds):
             # 获取变量值后需要替换掉原数据
             if action_tag == 'getVar':
                 step_ = action_step.split('=', 1)
-                result = f'{result}'.replace("<", "{").replace(">", "}")
+                step_result = f'{result}'.replace("<", "{").replace(">", "}")
                 if step_[-1].startswith(' '):
-                    action_step = f'{step_[0]}= {result}'
+                    action_step = f'{step_[0]}= {step_result}'
                 else:
-                    action_step = f'{step_[0]}={result}'
+                    action_step = f'{step_[0]}={step_result}'
                 result = None
 
             # call action中某一语句抛出异常，会导致call action状态也是false,需要处理
-            result_exception_flag = not exception_flag
+            status = not exception_flag
             if Var.exception_flag:
-                result_exception_flag = True
+                status = True
 
-            if result is not None:
-                # if while 等需要把结果放在语句后面
-                result_step = '{}|:|{}|:|{}s|:|{}|:|{}: --> {}'.format(snapshot_index, result_exception_flag,
-                                                                         duration,
-                                                                         imagename, f'{style}- {action_step}', result)
-            else:
-                result_step = '{}|:|{}|:|{}s|:|{}|:|{}'.format(snapshot_index, result_exception_flag, duration,
-                                                                 imagename, f'{style}- {action_step}')
-            result_step = '{}\n'.format(result_step.replace('\n', ''))
-            with open(os.path.join(Var.snapshot_dir, 'result.log'), 'a') as f:
-                f.write(result_step)
-
+            Var.test_case_steps[str(snapshot_index)] = {
+                'index': snapshot_index,
+                'status': status,
+                'duration': duration,
+                'snapshot': file,
+                'step': f'{style}- {action_step}',
+                'result': result if result is not None else ''
+            }
             if exception_flag:
                 raise exception
         return result
