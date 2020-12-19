@@ -30,8 +30,8 @@ class ServerUtils(object):
         try:
             path = None
             if self.browser_options:
-                if 'path' in self.browser_options.keys():
-                    path = self.browser_options['path']
+                if 'driver' in self.browser_options.keys():
+                    path = self.browser_options['driver']
                     if not os.path.isfile(path):
                         log_error(' No such file : {}'.format(path), False)
                         path = None
