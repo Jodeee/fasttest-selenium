@@ -338,11 +338,11 @@ class HTMLTestRunner(Template_mixin):
         dataId = test_info.dataId
         module_name = test_info.module_name
         err = '\n' + test_info.err if test_info.err else 'Nothing'
-        run_time = str('%.2f' % (test_info.stop_time - test_info.start_time))
         steps = ""
         if os.path.exists(test_info.snapshot_dir):
             for key in sorted(test_info.test_case_steps):
                 value = test_info.test_case_steps[key]
+                run_time = value['duration']
                 step = value['step'].replace('\n', '')
                 if value['result']:
                     step = '{} --> {}'.format(value['step'], value['result']).replace('\n', '')
