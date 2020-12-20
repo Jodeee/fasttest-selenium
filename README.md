@@ -1,5 +1,6 @@
 # 框架介绍
-fasttest-selenium 是由Python语言开发的WEB端自动化框架，通过yaml编写相应的action即可调用Selenium API完成自动化测试。
+fasttest-selenium 是由Python语言开发的WEB端自动化框架，通过yaml编写相应的action即可调用Selenium API完成自动化测试。  
+[文档介绍](https://www.yuque.com/books/share/99dcee33-a99d-4364-ab48-eb511d7ceb2d?#)
 ## idea
 - 能否同时运行多个不同的浏览器，解决兼容性测试问题
 - 通过插件快速输入关键字
@@ -275,7 +276,6 @@ steps:
 
 `Report` 为测试结果目录，用例执行完毕后会自动生成高度还原测试用例步骤的测试报告，可点击具体步骤
 查看截图和错误信息
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/499819/1608391722637-0c6a03c9-2787-42b4-bc3b-ff311aea7f74.png#align=left&display=inline&height=439&margin=%5Bobject%20Object%5D&name=image.png&originHeight=878&originWidth=2432&size=183874&status=done&style=none&width=1216)
 
 # 关键字
 
