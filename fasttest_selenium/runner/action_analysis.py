@@ -26,16 +26,16 @@ class ActionAnalysis(object):
         name = name[2:-1]
         if name in self.for_variables.keys():
             object_var = self.for_variables[name]
-        elif name in self.common_var.keys():
-            object_var = self.common_var[name]
         elif name in self.variables:
             object_var = self.variables[name]
-        elif name in vars(Var).keys():
-            object_var = vars(Var)[name]
+        elif name in self.common_var.keys():
+            object_var = self.common_var[name]
         elif name in Var.extensions_var['variable'].keys():
             object_var = Var.extensions_var['variable'][name]
         elif name in Var.extensions_var['resource'].keys():
             object_var = Var.extensions_var['resource'][name]
+        elif name in vars(Var).keys():
+            object_var = vars(Var)[name]
         else:
             raise KeyError(name)
         return object_var
@@ -134,7 +134,7 @@ class ActionAnalysis(object):
         parms = parms.strip()
         if re.match('^\(.*\)$', parms):
             params = []
-            pattern_content = re.compile(r'(".*?")|(\'.*?\')|(\$\{.*?\}\[.*?\])|(\$\{.*?\})|,| ')
+            pattern_content = re.compile(r'(".*?")|(\'.*?\')|(\${\w*?}\[\w*?\])|(\${\w*?})|,| ')
             find_content = re.split(pattern_content, parms[1:-1])
             find_content = [x.strip() for x in find_content if x]
             for param in find_content:
