@@ -25,7 +25,7 @@ class Project(object):
         self.__analytical_common_file()
         self.__init_data()
         self.__init_keywords()
-        self.__init_images()
+        self.__init_resource()
         self.__init_testcase_suite()
 
     def __init_project(self):
@@ -68,6 +68,8 @@ class Project(object):
                     Var.extensions_var[extensionsK] = extensionsV
         if not Var.extensions_var:
             Var.extensions_var = {}
+        if 'variable' not in Var.extensions_var:
+            Var.extensions_var['variable'] = {}
 
     def __init_keywords(self):
 
@@ -78,21 +80,19 @@ class Project(object):
             return
         Var.new_keywords_data = Var.extensions_var['keywords']
 
-    def __init_images(self):
+    def __init_resource(self):
 
-        if 'images' not in  Var.extensions_var.keys():
-            Var.extensions_var['images_file'] = {}
-            return
-        log_info('******************* analytical images *******************')
-        images_dict = {}
-        for images in Var.extensions_var['images']:
-            images_file = os.path.join(Var.ROOT, 'images/{}'.format(images))
-            if os.path.isfile(images_file):
-                images_dict[images] = images_file
-            else:
-                raise FileNotFoundError('No such file or directory: {}'.format(images_file))
-        Var.extensions_var['images_file'] = images_dict
-        log_info(' {}'.format(Var.extensions_var['images_file']))
+        log_info('******************* analytical resource *******************')
+        if 'resource' not in Var.extensions_var.keys():
+            Var.extensions_var['resource'] = {}
+
+        for resource, path in Var.extensions_var['resource'].items():
+            resource_file = os.path.join(Var.ROOT, path)
+            if not os.path.isfile(resource_file):
+                log_error('No such file or directory: {}'.format(resource_file), False)
+                continue
+            Var.extensions_var['resource'][resource] = resource_file
+            log_info(' {}: {}'.format(resource, resource_file))
 
     def __init_logging(self):
 

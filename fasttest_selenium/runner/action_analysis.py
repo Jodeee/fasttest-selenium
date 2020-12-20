@@ -32,8 +32,10 @@ class ActionAnalysis(object):
             object_var = self.variables[name]
         elif name in vars(Var).keys():
             object_var = vars(Var)[name]
-        elif 'variable' in Var.extensions_var.keys() and name in Var.extensions_var['variable'].keys():
+        elif name in Var.extensions_var['variable'].keys():
             object_var = Var.extensions_var['variable'][name]
+        elif name in Var.extensions_var['resource'].keys():
+            object_var = Var.extensions_var['resource'][name]
         else:
             raise KeyError(name)
         return object_var
