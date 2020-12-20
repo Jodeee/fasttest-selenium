@@ -134,7 +134,7 @@ class ActionAnalysis(object):
         parms = parms.strip()
         if re.match('^\(.*\)$', parms):
             params = []
-            pattern_content = re.compile(r'(".*?")|(\'.*?\')|(\${\w*?}\[\w*?\])|(\${\w*?})|,| ')
+            pattern_content = re.compile(r'(".*?")|(\'.*?\')|(\${\w*?}\[.*?\])|(\${\w*?})|,| ')
             find_content = re.split(pattern_content, parms[1:-1])
             find_content = [x.strip() for x in find_content if x]
             for param in find_content:
