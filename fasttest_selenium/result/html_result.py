@@ -106,7 +106,7 @@ class Template_mixin(object):
     # module_name
     MODULE_NAME = r'''
                 <tr>
-                    <td class="result_css_module_td" colspan="2" style=" text-align:left; text-indent: 20px;">{module_name}</td>
+                    <td class="result_css_module_td" colspan="2" style=" text-align:left; text-indent: 10px;">{module_name}</td>
                     <td class="result_css_module_td" colspan="3"><span class="result_css_success result_css_status">&nbsp;success:{success}&nbsp;</span> | <span class="result_css_failure result_css_status">&nbsp;failure:{failure}&nbsp;</span> | <span class="result_css_error result_css_status">&nbsp;error:{error}&nbsp;</span> | <span class="result_css_skipped result_css_status">&nbsp;skipped:{skipped}&nbsp;</span></td>
                     <td class="result_css_module_name" data-tag='module_name_{tag_module_name}'>Open</td>
                 </tr>
@@ -114,9 +114,9 @@ class Template_mixin(object):
 
     # case
     CASE_TMPL = r'''
-                <tr class='module_name_{module_name}' style="display: none">
-                    <td class="result_css_module_td result_css_{b_color}" style=" text-align:left; text-indent: 40px;">{casename}</td>
-                    <td class="result_css_module_td result_css_{b_color}">{description}</td>
+                <tr module-data-tag='module_name_{module_name}' style="display: none">
+                    <td class="result_css_module_td result_css_{b_color}" style=" text-align:left; text-indent: 20px;">{casename}</td>
+                    <td class="result_css_module_td result_css_{b_color}" style=" text-align:left; text-indent: 5px;">{description}</td>
                     <td class="result_css_module_td result_css_{b_color}">{startTime}</td>
                     <td class="result_css_module_td result_css_{b_color}">{duration}</td>
                     <td class="result_css_module_td result_css_{b_color}">{status}</td>
@@ -126,7 +126,7 @@ class Template_mixin(object):
 
     # case details
     CASE_DETA_NOT_SNAPSHOT = r'''
-                <tr class="module_td_view_{module_name}_{dataId}" style="display: none">
+                <tr module-td-data-tag="module_td_view_{module_name}_{dataId}" style="display: none">
                     <td class="result_css_module_deta" colspan="2" style="border-right: 0">
                         <div class="result_css_errordiv">
                             <h3 style="margin-bottom: 10px">Steps</h3>
@@ -143,7 +143,7 @@ class Template_mixin(object):
     '''
 
     CASE_DETA_SNAPSHOT = r'''
-                <tr class="module_td_view_{module_name}_{dataId}" style="display: none">
+                <tr module-td-data-tag="module_td_view_{module_name}_{dataId}" style="display: none">
                     <td class="result_css_module_deta" colspan="6" style="border-right: 0">
                         <div class="result_css_errordiv">
                             <h3 style="margin-bottom: 10px">Steps</h3>

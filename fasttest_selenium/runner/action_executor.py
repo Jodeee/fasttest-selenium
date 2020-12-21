@@ -542,12 +542,11 @@ class ActionExecutor(object):
         '''
         base_image = self.__get_value(action)
         match_image = self.__get_value(action,1)
-        if match_image not in Var.extensions_var['images_file'].keys():
+        if not os.path.isfile(match_image):
             raise FileNotFoundError("No such file: {}".format(match_image))
         if not os.path.isfile(base_image):
             raise FileNotFoundError("No such file: {}".format(base_image))
-        img_file = Var.extensions_var['images_file'][match_image]
-        orc_img = OpencvUtils(base_image, img_file)
+        orc_img = OpencvUtils(base_image, match_image)
         img_info = orc_img.extract_minutiae()
         if img_info:
             Var.ocrimg = img_info['ocrimg']
