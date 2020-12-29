@@ -7,8 +7,10 @@ from fasttest_selenium.utils import *
 from fasttest_selenium.common import *
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.common.exceptions import NoSuchElementException, NoSuchWindowException, InvalidSessionIdException
+from selenium.common.exceptions import NoSuchElementException, NoSuchWindowException, InvalidSessionIdException, TimeoutException
 
 class DriverBase(object):
 
@@ -52,7 +54,7 @@ class DriverBase(object):
 
     @staticmethod
     def createSession():
-        server = ServerUtils(Var.browser, Var.browser_options, Var.implicitlyWait, Var.maxWindow)
+        server = ServerUtils(Var.browser, Var.browser_options, Var.maxWindow)
         Var.instance = server.start_server()
         DriverBase.init()
 
@@ -91,16 +93,6 @@ class DriverBase(object):
         :return:
         '''
         driver.refresh()
-
-
-    @staticmethod
-    def implicitly_wait(time):
-        '''
-        implicitlyWait
-        :param: time
-        :return:
-        '''
-        driver.implicitly_wait(float(time))
 
     @staticmethod
     def maximize_window():
@@ -336,7 +328,7 @@ class DriverBase(object):
         executeScript
         :return:
         '''
-        driver.execute_script(js)
+        return driver.execute_script(js)
 
     @staticmethod
     def send_keys(element, text):
@@ -562,7 +554,7 @@ class DriverBase(object):
         return image_path
 
     @staticmethod
-    def get_element(type, text):
+    def get_element(type, text, timeout=10):
         '''
         getElement
         :param type:
@@ -581,15 +573,19 @@ class DriverBase(object):
             'partial_link_text': By.PARTIAL_LINK_TEXT,
         })
         try:
-            element = driver.find_element(by[type], text)
+            element = WebDriverWait(driver, timeout).until(
+                EC.visibility_of_element_located((by[type], text))
+            )
             return element
         except NoSuchElementException:
+            return None
+        except TimeoutException:
             return None
         except Exception as e:
             raise e
 
     @staticmethod
-    def get_elements(type, text):
+    def get_elements(type, text, timeout=10):
         '''
         getElements
         :param type:
@@ -607,5 +603,14 @@ class DriverBase(object):
             'css_selector': By.CSS_SELECTOR,
             'partial_link_text': By.PARTIAL_LINK_TEXT,
         })
-        elements = driver.find_elements(by[type], text)
-        return elements
+        try:
+            elements = WebDriverWait(driver, timeout).until(
+                EC.visibility_of_any_elements_located((by[type], text))
+            )
+            return elements
+        except NoSuchElementException:
+            return []
+        except TimeoutException:
+            return []
+        except Exception as e:
+            raise e

@@ -152,7 +152,7 @@ class Project(object):
 
     def start(self):
         if not Var.isReset:
-            server = ServerUtils(Var.browser, Var.browser_options, Var.implicitlyWait, Var.maxWindow)
+            server = ServerUtils(Var.browser, Var.browser_options, Var.maxWindow)
             Var.instance = server.start_server()
             DriverBase.init()
 

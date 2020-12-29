@@ -25,7 +25,7 @@ def return_keywords():
         "maxWindow",  # 窗口最大化
         "minWindow",  # 窗口最小化
         "fullscreenWindow", # 全屏窗口
-        "implicitlyWait", # 设置等待时间
+        "setTimeout", # 设置等待时间
         "deleteAllCookies",  # 删除所有cookies
         "deleteCookie",  # 删除指定cookies
         "addCookie", # 添加cookies
@@ -37,6 +37,7 @@ def return_keywords():
         "setWindowPosition",  # 设置设置窗口位置
         "executeScript", # 执行JS
         "matchImage", # 匹配图片
+        "$.executeScript", # 获取JS执行结果
         "$.saveScreenshot", # 截图
         "$.isSelected",  # 判断是否选中
         "$.isDisplayed",  # 判断元素是否显示

@@ -14,13 +14,10 @@ class ServerUtils(object):
         except:
             return None
 
-    def __init__(self, browser, browser_options, implicitly_wait, max_window):
+    def __init__(self, browser, browser_options, max_window):
         self.browser = browser
         self.instance = None
         self.browser_options = browser_options
-        if implicitly_wait is None :
-            implicitly_wait = 5
-        self.implicitly_wait = implicitly_wait
         if max_window is None:
             max_window = False
         self.max_window = max_window
@@ -82,7 +79,6 @@ class ServerUtils(object):
                 else:
                     self.instance = webdriver.PhantomJS()
 
-            self.instance.implicitly_wait(self.implicitly_wait)
             if self.max_window:
                 self.instance.maximize_window()
             return self.instance

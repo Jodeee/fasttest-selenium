@@ -58,7 +58,10 @@ class ActionExecutor(object):
                 raise TypeError('input parameter format error:{}'.format(parms[index]))
             key = parms[index].split('=', 1)[0].strip()
             value = parms[index].split('=', 1)[-1].strip()
-            element = DriverBase.get_element(key, value)
+            timeout = Var.timeout
+            if not timeout:
+                timeout = 10
+            element = DriverBase.get_element(key, value, int(timeout))
         else:
             raise TypeError('the parms type must be: WebElement or str')
 
@@ -128,14 +131,14 @@ class ActionExecutor(object):
         '''
         DriverBase.refresh()
 
-    def __action_implicitly_wait(self, action):
+    def __action_set_timeout(self, action):
         """
-        行为执行：implicitlyWait
+        行为执行：setTimeout
         :param action:
         :return:
         """
         time = self.__get_value(action)
-        DriverBase.implicitly_wait(float(time))
+        Var.timeout = int(time)
 
     def __action_maximize_window(self):
         '''
@@ -532,7 +535,7 @@ class ActionExecutor(object):
         :return:
         '''
         js_value = self.__get_value(action)
-        DriverBase.execute_script(js_value)
+        return DriverBase.execute_script(js_value)
 
     def __action_match_image(self, action):
         '''
@@ -584,7 +587,10 @@ class ActionExecutor(object):
             raise TypeError('input parameter format error:{}'.format(parms[0]))
         key = parms[0].strip().split('=', 1)[0]
         value = parms[0].strip().split('=', 1)[-1]
-        elements = DriverBase.get_elements(key, value)
+        timeout = Var.timeout
+        if not timeout:
+            timeout = 10
+        elements = DriverBase.get_elements(key, value, int(timeout))
         return elements
 
     def __action_ifcheck(self, action):
@@ -630,6 +636,8 @@ class ActionExecutor(object):
             result = self.__action_is_enabled(action)
         elif action.key == '$.saveScreenshot':
             result = self.__action_save_screenshot(action)
+        elif action.key == '$.executeScript':
+            result = self.__action_execute_script(action)
         elif action.key == '$.getText':
             result = self.__action_get_text(action)
         elif action.key == '$.getSize':
@@ -806,8 +814,8 @@ class ActionExecutor(object):
         elif action.key == 'quit':
             result = self.__action_quit()
 
-        elif action.key == 'implicitlyWait':
-            result = self.__action_implicitly_wait(action)
+        elif action.key == 'setTimeout':
+            result = self.__action_set_timeout(action)
 
         elif action.key == 'back':
             result = self.__action_back()
