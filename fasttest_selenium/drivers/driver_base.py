@@ -577,10 +577,14 @@ class DriverBase(object):
                 EC.visibility_of_element_located((by[type], text))
             )
             return element
-        except NoSuchElementException:
-            return None
         except TimeoutException:
-            return None
+            try:
+                element = driver.find_element(by[type], text)
+                return element
+            except NoSuchElementException:
+                return None
+            except Exception as e:
+                raise e
         except Exception as e:
             raise e
 
@@ -605,7 +609,7 @@ class DriverBase(object):
         })
         try:
             elements = WebDriverWait(driver, timeout).until(
-                EC.visibility_of_any_elements_located((by[type], text))
+                EC.visibility_of_all_elements_located((by[type], text))
             )
             return elements
         except NoSuchElementException:

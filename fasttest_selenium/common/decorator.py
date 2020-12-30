@@ -35,7 +35,7 @@ def mach_keywords(func, *args, **kwds):
             if Var.exception_flag:
                 status = True
 
-            Var.test_case_steps[str(snapshot_index)] = {
+            Var.test_case_steps[snapshot_index] = {
                 'index': snapshot_index,
                 'status': status,
                 'duration': duration,
