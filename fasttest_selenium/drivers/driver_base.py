@@ -583,6 +583,7 @@ class DriverBase(object):
         except TimeoutException:
             try:
                 element = driver.find_element(by[type], text)
+                Var.timeout_step_list.append(step)
                 return element
             except NoSuchElementException:
                 return None
