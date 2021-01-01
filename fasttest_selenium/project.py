@@ -163,4 +163,23 @@ class Project(object):
         if not Var.isReset:
             server.stop_server(Var.instance)
 
+        if Var.all_result:
+            log_info(' Timeout case:')
+            for k, v in Var.all_result.result.items():
+                for case_info in v:
+                    if case_info.timeout_step_list:
+                        log_error(' {}'.format(case_info.casepath), False)
+                        for s in case_info.timeout_step_list:
+                            log_error(' {}'.format(s), False)
+            if Var.all_result.errors:
+                log_info(' Error case:')
+            for error in Var.all_result.errors:
+                cast_info = error[0]
+                log_error(cast_info.testcase_path, False)
+
+            if Var.all_result.failures:
+                log_info(' Failed case:')
+            for failure in Var.all_result.failures:
+                cast_info = failure[0]
+                log_error(cast_info.testcase_path, False)
         return Var.all_result

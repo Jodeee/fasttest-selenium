@@ -49,6 +49,7 @@ class ActionExecutor(object):
         :return:
         '''
         parms = action.parms
+        step = action.step
         if len(parms) <= index or not len(parms):
             raise TypeError('missing {} required positional argument'.format(index + 1))
         if isinstance(parms[index], WebElement):
@@ -58,10 +59,13 @@ class ActionExecutor(object):
                 raise TypeError('input parameter format error:{}'.format(parms[index]))
             key = parms[index].split('=', 1)[0].strip()
             value = parms[index].split('=', 1)[-1].strip()
+            debug = False
+            if step.endswith('--Debug') or step.endswith('--debug'):
+                debug = True
             timeout = Var.timeout
             if not timeout:
                 timeout = 10
-            element = DriverBase.get_element(key, value, int(timeout))
+            element = DriverBase.get_element(key, value, int(timeout), debug, step)
         else:
             raise TypeError('the parms type must be: WebElement or str')
 
@@ -580,6 +584,7 @@ class ActionExecutor(object):
         :return:
         '''
         parms = action.parms
+        step = action.step
         if not len(parms):
             raise TypeError('missing 1 required positional argument')
         if not re.match(r'^(id|name|class|tag_name|link_text|partial_link_text|xpath|css_selector)\s*=.+',
@@ -587,10 +592,15 @@ class ActionExecutor(object):
             raise TypeError('input parameter format error:{}'.format(parms[0]))
         key = parms[0].strip().split('=', 1)[0]
         value = parms[0].strip().split('=', 1)[-1]
+        debug = False
+        if step.endswith('--Debug') or step.endswith('--debug'):
+            debug = True
         timeout = Var.timeout
         if not timeout:
             timeout = 10
-        elements = DriverBase.get_elements(key, value, int(timeout))
+        elements = DriverBase.get_elements(key, value, int(timeout), debug, step)
+        if not elements:
+            raise Exception("Can't find elements: {}".format(parms[0]))
         return elements
 
     def __action_ifcheck(self, action):

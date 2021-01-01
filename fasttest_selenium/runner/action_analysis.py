@@ -131,9 +131,9 @@ class ActionAnalysis(object):
         :param parms:
         :return:
         '''
-        parms = parms.strip()
-        if re.match('^\(.*\)$', parms):
+        if re.match('^\(.*\)$|^\(.*\) --Debug$|^\(.*\) --debug$', parms):
             params = []
+            parms = parms.rstrip('--Debug').rstrip('--debug').strip()
             pattern_content = re.compile(r'(".*?")|(\'.*?\')|(\${\w*?}\[.*?\])|(\${\w*?})|,| ')
             find_content = re.split(pattern_content, parms[1:-1])
             find_content = [x.strip() for x in find_content if x]
