@@ -25,6 +25,14 @@ class DriverBase(object):
             raise e
 
     @staticmethod
+    def get_driver():
+        '''
+        return driver
+        :return:
+        '''
+        return driver
+
+    @staticmethod
     def open_url(url):
         '''
         open url
@@ -555,7 +563,7 @@ class DriverBase(object):
         return image_path
 
     @staticmethod
-    def get_element(type, text, timeout=10, debug=False, step=''):
+    def get_element(type, text, timeout=10, step=''):
         '''
         getElement
         :param type:
@@ -574,8 +582,6 @@ class DriverBase(object):
             'partial_link_text': By.PARTIAL_LINK_TEXT,
         })
         try:
-            if debug:
-                DriverBase.set_trace()
             element = WebDriverWait(driver, timeout).until(
                 EC.visibility_of_element_located((by[type], text))
             )
@@ -593,7 +599,7 @@ class DriverBase(object):
             raise e
 
     @staticmethod
-    def get_elements(type, text, timeout=10, debug=False, step=''):
+    def get_elements(type, text, timeout=10, step=''):
         '''
         getElements
         :param type:
@@ -612,7 +618,7 @@ class DriverBase(object):
             'partial_link_text': By.PARTIAL_LINK_TEXT,
         })
         try:
-            element = DriverBase.get_element(type, text, timeout, debug, step)
+            element = DriverBase.get_element(type, text, timeout, step)
             if not element:
                 return []
             elements = driver.find_elements(by[type], text)
@@ -621,23 +627,3 @@ class DriverBase(object):
             return []
         except Exception as e:
             raise e
-
-    @staticmethod
-    def set_trace():
-        '''
-        by
-        - 'id': By.ID
-        - 'name': By.NAME
-        - 'xpath': By.XPATH
-        - 'class': By.CLASS_NAME
-        - 'tag_name': By.TAG_NAME
-        - 'link_text': By.LINK_TEXT
-        - 'css_selector': By.CSS_SELECTOR
-        - 'partial_link_text': By.PARTIAL_LINK_TEXT
-        e.g.
-        - element = driver.find_element(By.XPATH, 'value')
-        - elements = driver.find_elements(By.XPATH, 'values')
-        docs
-        - https://www.selenium.dev/documentation/zh-cn/webdriver/web_element/
-        '''
-        pdb.set_trace()

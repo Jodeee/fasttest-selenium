@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-import sys
 import time
+import datetime
 from collections import Iterable
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.common.exceptions import JavascriptException
+from fasttest_selenium.common.debug import debug
 from fasttest_selenium.common import Var, log_info, log_error
 from fasttest_selenium.drivers.driver_base import DriverBase
 from fasttest_selenium.utils.opcv_utils import OpencvUtils
@@ -43,6 +45,7 @@ class ActionExecutor(object):
         else:
             log_info(f' <-- {key}: {type(result)} {result}')
 
+    @debug
     def __get_element_info(self, action, index=0, is_return=False):
         '''
         :param action:
@@ -59,13 +62,10 @@ class ActionExecutor(object):
                 raise TypeError('input parameter format error:{}'.format(parms[index]))
             key = parms[index].split('=', 1)[0].strip()
             value = parms[index].split('=', 1)[-1].strip()
-            debug = False
-            if step.endswith('--Debug') or step.endswith('--debug'):
-                debug = True
             timeout = Var.timeout
             if not timeout:
                 timeout = 10
-            element = DriverBase.get_element(key, value, int(timeout), debug, step)
+            element = DriverBase.get_element(key, value, int(timeout), step)
         else:
             raise TypeError('the parms type must be: WebElement or str')
 
@@ -86,6 +86,7 @@ class ActionExecutor(object):
         value = parms[index]
         return value
 
+    @debug
     def __action_open_url(self, action):
         """
         openUrl
@@ -95,7 +96,8 @@ class ActionExecutor(object):
         url = self.__get_value(action)
         DriverBase.open_url(url)
 
-    def __action_close(self):
+    @debug
+    def __action_close(self, action):
         """
         close
         :param action:
@@ -103,7 +105,8 @@ class ActionExecutor(object):
         """
         DriverBase.close()
 
-    def __action_quit(self):
+    @debug
+    def __action_quit(self, action):
         """
         行为执行：quit
         :param action:
@@ -111,7 +114,8 @@ class ActionExecutor(object):
         """
         DriverBase.quit()
 
-    def __action_back(self):
+    @debug
+    def __action_back(self, action):
         '''
         back
         :param action:
@@ -119,7 +123,8 @@ class ActionExecutor(object):
         '''
         DriverBase.back()
 
-    def __action_forward(self):
+    @debug
+    def __action_forward(self, action):
         '''
         forward
         :param action:
@@ -127,7 +132,8 @@ class ActionExecutor(object):
         '''
         DriverBase.forward()
 
-    def __action_refresh(self):
+    @debug
+    def __action_refresh(self, action):
         '''
         refresh
         :param action:
@@ -144,34 +150,39 @@ class ActionExecutor(object):
         time = self.__get_value(action)
         Var.timeout = int(time)
 
-    def __action_maximize_window(self):
+    @debug
+    def __action_maximize_window(self, action):
         '''
         maxWindow
         :return:
         '''
         DriverBase.maximize_window()
 
-    def __action_minimize_window(self):
+    @debug
+    def __action_minimize_window(self, action):
         '''
         minWindow
         :return:
         '''
         DriverBase.minimize_window()
 
-    def __action_fullscreen_window(self):
+    @debug
+    def __action_fullscreen_window(self, action):
         '''
         fullscreenWindow
         :return:
         '''
         DriverBase.fullscreen_window()
 
-    def __action_delete_all_cookies(self):
+    @debug
+    def __action_delete_all_cookies(self, action):
         '''
         deleteAllCookies
         :return:
         '''
         DriverBase.delete_all_cookies()
 
+    @debug
     def __action_delete_cookie(self, action):
         '''
         deleteCookie
@@ -180,6 +191,7 @@ class ActionExecutor(object):
         key = self.__get_value(action)
         DriverBase.delete_cookie(key)
 
+    @debug
     def __action_add_cookie(self, action):
         '''
         addCookie
@@ -262,6 +274,7 @@ class ActionExecutor(object):
         yoffset = self.__get_value(action, 2)
         DriverBase.drag_and_drop_by_offse(element, float(xoffset), float(yoffset))
 
+    @debug
     def __action_move_by_offset(self, action):
         '''
         moveByOffset
@@ -292,6 +305,7 @@ class ActionExecutor(object):
         yoffset = self.__get_value(action, 2)
         DriverBase.move_to_element_with_offset(element, float(xoffset), float(yoffset))
 
+    @debug
     def __action_switch_to_frame(self, action):
         '''
         switchToFrame
@@ -301,7 +315,8 @@ class ActionExecutor(object):
         frame_reference = self.__get_value(action)
         DriverBase.switch_to_frame(frame_reference)
 
-    def __action_switch_to_default_content(self):
+    @debug
+    def __action_switch_to_default_content(self, action):
         '''
         switchToDefaultContent
         :param action:
@@ -309,7 +324,8 @@ class ActionExecutor(object):
         '''
         DriverBase.switch_to_default_content()
 
-    def __action_switch_to_parent_frame(self):
+    @debug
+    def __action_switch_to_parent_frame(self, action):
         '''
         switchToParentFrame
         :param action:
@@ -317,6 +333,7 @@ class ActionExecutor(object):
         '''
         DriverBase.switch_to_parent_frame()
 
+    @debug
     def __action_switch_to_window(self, action):
         '''
         switchToWindow
@@ -457,7 +474,8 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         return DriverBase.get_rect(element)
 
-    def __action_get_name(self):
+    @debug
+    def __action_get_name(self, action):
         '''
         getName
         :param :
@@ -465,7 +483,8 @@ class ActionExecutor(object):
         '''
         return DriverBase.get_name()
 
-    def __action_get_title(self):
+    @debug
+    def __action_get_title(self, action):
         '''
         getTitle
         :param action:
@@ -473,7 +492,8 @@ class ActionExecutor(object):
         '''
         return DriverBase.get_title()
 
-    def __action_get_current_url(self):
+    @debug
+    def __action_get_current_url(self, action):
         '''
         getTitle
         :param :
@@ -481,7 +501,8 @@ class ActionExecutor(object):
         '''
         return DriverBase.get_current_url()
 
-    def __action_get_current_window_handle(self):
+    @debug
+    def __action_get_current_window_handle(self, action):
         '''
         getCurrentWindowHandle
         :param :
@@ -489,7 +510,8 @@ class ActionExecutor(object):
         '''
         return DriverBase.get_current_window_handle()
 
-    def __action_get_window_handles(self):
+    @debug
+    def __action_get_window_handles(self, action):
         '''
         getWindowHandles
         :param :
@@ -497,7 +519,8 @@ class ActionExecutor(object):
         '''
         return DriverBase.get_window_handles()
 
-    def __action_get_cookies(self):
+    @debug
+    def __action_get_cookies(self, action):
         '''
         getCookies
         :param :
@@ -505,6 +528,7 @@ class ActionExecutor(object):
         '''
         return DriverBase.get_cookies()
 
+    @debug
     def __action_get_cookie(self, action):
         '''
         getCookie
@@ -514,7 +538,8 @@ class ActionExecutor(object):
         key = self.__get_value(action)
         return DriverBase.get_cookie(key)
 
-    def __action_get_window_position(self):
+    @debug
+    def __action_get_window_position(self, action):
         '''
         getWindowPosition
         :param :
@@ -522,6 +547,7 @@ class ActionExecutor(object):
         '''
         return DriverBase.get_window_position()
 
+    @debug
     def __action_set_window_position(self, action):
         '''
         setWindowPosition
@@ -532,14 +558,27 @@ class ActionExecutor(object):
         y = self.__get_value(action, 1)
         DriverBase.set_window_position(float(x), float(y))
 
+    @debug
     def __action_execute_script(self, action):
         '''
         executeScript
         :param :
         :return:
         '''
-        js_value = self.__get_value(action)
-        return DriverBase.execute_script(js_value)
+        timeout = Var.timeout
+        if not timeout:
+            timeout = 10
+        endTime = datetime.datetime.now() + datetime.timedelta(seconds=int(timeout))
+        while True:
+            try:
+                js_value = self.__get_value(action)
+                return DriverBase.execute_script(js_value)
+            except JavascriptException as e:
+                if datetime.datetime.now() >= endTime:
+                    raise e
+                time.sleep(1)
+            except Exception as e:
+                raise e
 
     def __action_match_image(self, action):
         '''
@@ -560,7 +599,8 @@ class ActionExecutor(object):
         else:
             raise Exception("Can't find image {}".format(match_image))
 
-    def __action_get_window_size(self):
+    @debug
+    def __action_get_window_size(self, action):
         '''
         getWindowSize
         :param :
@@ -568,6 +608,7 @@ class ActionExecutor(object):
         '''
         return DriverBase.get_window_size()
 
+    @debug
     def __action_set_window_size(self, action):
         '''
         setWindowSize
@@ -578,6 +619,7 @@ class ActionExecutor(object):
         height = self.__get_value(action)
         DriverBase.set_window_size(float(width), float(height))
 
+    @debug
     def __action_get_elements(self, action):
         '''
         :param action:
@@ -592,13 +634,10 @@ class ActionExecutor(object):
             raise TypeError('input parameter format error:{}'.format(parms[0]))
         key = parms[0].strip().split('=', 1)[0]
         value = parms[0].strip().split('=', 1)[-1]
-        debug = False
-        if step.endswith('--Debug') or step.endswith('--debug'):
-            debug = True
         timeout = Var.timeout
         if not timeout:
             timeout = 10
-        elements = DriverBase.get_elements(key, value, int(timeout), debug, step)
+        elements = DriverBase.get_elements(key, value, int(timeout), step)
         if not elements:
             raise Exception("Can't find elements: {}".format(parms[0]))
         return elements
@@ -665,23 +704,23 @@ class ActionExecutor(object):
         elif action.key == '$.getRect':
             result = self.__action_get_rect(action)
         elif action.key == '$.getName':
-            result = self.__action_get_name()
+            result = self.__action_get_name(action)
         elif action.key == '$.getTitle':
-            result = self.__action_get_title()
+            result = self.__action_get_title(action)
         elif action.key == '$.getCurrentUrl':
-            result = self.__action_get_current_url()
+            result = self.__action_get_current_url(action)
         elif action.key == '$.getCurrentWindowHandle':
-            result = self.__action_get_current_window_handle()
+            result = self.__action_get_current_window_handle(action)
         elif action.key == '$.getWindowHandles':
-            result = self.__action_get_window_handles()
+            result = self.__action_get_window_handles(action)
         elif action.key == '$.getCookies':
-            result = self.__action_get_cookies()
+            result = self.__action_get_cookies(action)
         elif action.key == '$.getCookie':
             result = self.__action_get_cookie(action)
         elif action.key == '$.getWindowPosition':
-            result = self.__action_get_window_position()
+            result = self.__action_get_window_position(action)
         elif action.key == '$.getWindowSize':
-            result = self.__action_get_window_size()
+            result = self.__action_get_window_size(action)
         elif action.key == '$.getElement':
             result = self.__get_element_info(action)
         elif action.key == '$.getElements':
@@ -819,34 +858,34 @@ class ActionExecutor(object):
             result = self.__action_open_url(action)
 
         elif action.key == 'close':
-            result = self.__action_close()
+            result = self.__action_close(action)
 
         elif action.key == 'quit':
-            result = self.__action_quit()
+            result = self.__action_quit(action)
 
         elif action.key == 'setTimeout':
             result = self.__action_set_timeout(action)
 
         elif action.key == 'back':
-            result = self.__action_back()
+            result = self.__action_back(action)
 
         elif action.key == 'forward':
-            result = self.__action_forward()
+            result = self.__action_forward(action)
 
         elif action.key == 'refresh':
-            result = self.__action_refresh()
+            result = self.__action_refresh(action)
 
         elif action.key == 'maxWindow':
-            result = self.__action_maximize_window()
+            result = self.__action_maximize_window(action)
 
         elif action.key == 'minWindow':
-            result = self.__action_minimize_window()
+            result = self.__action_minimize_window(action)
 
         elif action.key == 'fullscreenWindow':
-            result = self.__action_fullscreen_window()
+            result = self.__action_fullscreen_window(action)
 
         elif action.key == 'deleteAllCookies':
-            result = self.__action_delete_all_cookies()
+            result = self.__action_delete_all_cookies(action)
 
         elif action.key == 'deleteCookie':
             result = self.__action_delete_cookie(action)
@@ -891,10 +930,10 @@ class ActionExecutor(object):
             result = self.__action_switch_to_frame(action)
 
         elif action.key == 'switchToDefaultContent':
-            result = self.__action_switch_to_default_content()
+            result = self.__action_switch_to_default_content(action)
 
         elif action.key == 'switchToParentFrame':
-            result = self.__action_switch_to_parent_frame()
+            result = self.__action_switch_to_parent_frame(action)
 
         elif action.key == 'switchToWindow':
             result = self.__action_switch_to_window(action)
