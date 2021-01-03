@@ -60,11 +60,11 @@ class CaseAnalysis(object):
 
         # call 需要全局变量判断是否是debug模式
         if step.strip().endswith('--Debug') or step.strip().endswith('--debug') or Var.is_debug:
-            print(step)
             Var.is_debug = True
             while True:
                 try:
                     if self.is_run is False:
+                        print(step)
                         out = input('>')
                     elif not (step.strip().endswith('--Debug') or step.strip().endswith('--debug')):
                         self.is_run = True
