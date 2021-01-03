@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import re
+import os
+import traceback
+from fasttest_selenium.common import Var
 from fasttest_selenium.runner.action_analysis import ActionAnalysis
 
 class CaseAnalysis(object):
@@ -8,6 +11,8 @@ class CaseAnalysis(object):
     def __init__(self):
         self.action_nalysis = ActionAnalysis()
         self.testcase_steps = []
+        self.time_out = 10
+        self.is_run = None
 
     def iteration(self, steps, style='', common={}, iterating_var=None):
         '''
@@ -52,5 +57,61 @@ class CaseAnalysis(object):
                     raise SyntaxError('- {}:'.format(key))
 
     def case_executor(self, step, style, common, iterating_var):
-        result = self.action_nalysis.action_analysis(step, style, common, iterating_var)
-        return result
+
+        # call 需要全局变量判断是否是debug模式
+        if step.strip().endswith('--Debug') or step.strip().endswith('--debug') or Var.is_debug:
+            print(step)
+            Var.is_debug = True
+            while True:
+                try:
+                    if self.is_run is False:
+                        out = input('>')
+                    elif not (step.strip().endswith('--Debug') or step.strip().endswith('--debug')):
+                        self.is_run = True
+                        result = self.action_nalysis.action_analysis(self.rstrip_step(step), style, common, iterating_var)
+                        return result
+                    else:
+                        out = input('>')
+
+                    if not len(out):
+                        self.is_run = False
+                        continue
+                    elif out.lower() == 'r':
+                        # run
+                        self.is_run = True
+                        result = self.action_nalysis.action_analysis(self.rstrip_step(step), style, common, iterating_var)
+                        return result
+                    elif out.lower() == 'c':
+                        # continue
+                        self.is_run = False
+                        break
+                    elif out.lower() == 'n':
+                        # next
+                        self.is_run = False
+                        result = self.action_nalysis.action_analysis(self.rstrip_step(step), style, common, iterating_var)
+                        return result
+                    elif out.lower() == 'q':
+                        # quit
+                        os._exit(0)
+                    else:
+                        # runtime
+                        self.is_run = False
+                        self.time_out = Var.timeout
+                        Var.timeout = 0.5
+                        result = self.action_nalysis.action_analysis(out, style, common, iterating_var)
+                        Var.timeout = self.time_out
+                        continue
+                except Exception as e:
+                    Var.timeout = self.time_out
+                    self.is_run = False
+                    traceback.print_exc()
+                    continue
+        else:
+            result = self.action_nalysis.action_analysis(step, style, common, iterating_var)
+            return result
+
+
+    def rstrip_step(self, step):
+        if step.strip().endswith('--Debug') or step.strip().endswith('--debug'):
+            return step.strip()[:-7].strip()
+        return step

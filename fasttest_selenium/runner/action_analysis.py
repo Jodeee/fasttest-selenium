@@ -22,7 +22,7 @@ class ActionAnalysis(object):
         :return:
         '''
         if not re.match(r'^\${(\w+)}$', name):
-            raise SyntaxError(name)
+            raise NameError("name '{}' is not defined".format(name))
         name = name[2:-1]
         if name in self.for_variables.keys():
             object_var = self.for_variables[name]
@@ -37,7 +37,7 @@ class ActionAnalysis(object):
         elif name in vars(Var).keys():
             object_var = vars(Var)[name]
         else:
-            raise KeyError(name)
+            raise NameError("name '{}' is not defined".format(name))
         return object_var
 
     def __replace_string(self, content):
@@ -108,7 +108,7 @@ class ActionAnalysis(object):
             try:
                 param = param_value[key]
             except Exception as e:
-                raise Exception('{}: {}'.format(param, e))
+                raise SyntaxError('{}: {}'.format(param, e))
         else:
             param = self.__get_eval(param.strip())
         return param
@@ -131,9 +131,9 @@ class ActionAnalysis(object):
         :param parms:
         :return:
         '''
-        if re.match('^\(.*\)$|^\(.*\) --Debug$|^\(.*\) --debug$', parms):
+        parms = parms.strip()
+        if re.match('^\(.*\)$', parms):
             params = []
-            parms = parms.rstrip('--Debug').rstrip('--debug').strip()
             pattern_content = re.compile(r'(".*?")|(\'.*?\')|(\${\w*?}\[.*?\])|(\${\w*?})|,| ')
             find_content = re.split(pattern_content, parms[1:-1])
             find_content = [x.strip() for x in find_content if x]
@@ -271,7 +271,7 @@ class ActionAnalysis(object):
             elif action.key in Var.new_keywords_data:
                 result = self.action_executor.new_action_executor(action)
             else:
-                raise KeyError('The {} keyword is undefined!'.format(action.key))
+                raise KeyError("keyword '{}' is not defined".format(action.key))
 
             if action.tag == 'getVar':
                 # 变量赋值

@@ -38,6 +38,7 @@ class Project(object):
             Var.global_var = {} # 全局变量
             Var.extensions_var = {} # 扩展数据变量
             Var.common_var = {} # common临时变量，call执行完后重置
+            Var.timeout = 10 # 超时时间
 
     def __init_config(self):
 

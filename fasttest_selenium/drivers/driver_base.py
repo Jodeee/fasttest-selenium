@@ -582,7 +582,9 @@ class DriverBase(object):
             'partial_link_text': By.PARTIAL_LINK_TEXT,
         })
         try:
-            element = WebDriverWait(driver, timeout).until(
+            if not timeout:
+                timeout = 10
+            element = WebDriverWait(driver, int(timeout)).until(
                 EC.visibility_of_element_located((by[type], text))
             )
             return element

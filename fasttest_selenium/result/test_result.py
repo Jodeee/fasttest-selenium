@@ -64,6 +64,7 @@ class TestResult(unittest.TextTestResult):
         self.start_time = time.time()
         Var.test_case_steps = {}
         Var.timeout_step_list = []
+        Var.is_debug = False
 
     def stopTest(self, test):
         '''
@@ -85,6 +86,7 @@ class TestResult(unittest.TextTestResult):
         self.testinfo = None
         Var.test_case_steps = {}
         Var.timeout_step_list = []
+        Var.is_debug = False
 
     def addSuccess(self, test):
         '''
