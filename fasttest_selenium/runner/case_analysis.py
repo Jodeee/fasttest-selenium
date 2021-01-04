@@ -71,6 +71,7 @@ class CaseAnalysis(object):
                         result = self.action_nalysis.action_analysis(self.rstrip_step(step), style, common, iterating_var)
                         return result
                     else:
+                        print(step)
                         out = input('>')
 
                     if not len(out):
