@@ -586,41 +586,25 @@ class DriverBase(object):
         if not timeout:
             timeout = 10
         endTime = datetime.datetime.now() + datetime.timedelta(seconds=int(timeout))
+        index = 3
         while True:
             try:
                 element = driver.find_element(by[type], text)
-                if element.is_displayed() or element.is_enabled():
+                if element.is_enabled():
+                    return element
+                elif element.is_displayed():
+                    index -= 1
+                    if index < 0:
+                        return element
+                if datetime.datetime.now() >= endTime:
                     return element
                 time.sleep(0.5)
-                if datetime.datetime.now() >= endTime:
-                    element = driver.find_element(by[type], text)
-                    Var.timeout_step_list.append(step)
-                    return element
             except NoSuchElementException:
                 if datetime.datetime.now() >= endTime:
                     return None
                 time.sleep(0.5)
             except Exception as e:
                 raise e
-
-        # try:
-        #     if not timeout:
-        #         timeout = 10
-        #     element = WebDriverWait(driver, int(timeout)).until(
-        #         EC.visibility_of_element_located((by[type], text))
-        #     )
-        #     return element
-        # except TimeoutException:
-        #     try:
-        #         element = driver.find_element(by[type], text)
-        #         Var.timeout_step_list.append(step)
-        #         return element
-        #     except NoSuchElementException:
-        #         return None
-        #     except Exception as e:
-        #         raise e
-        # except Exception as e:
-        #     raise e
 
     @staticmethod
     def get_elements(type, text, timeout=10, step=''):

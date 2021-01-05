@@ -30,7 +30,6 @@ class TestInfo(object):
         self.module_name = test_method.module
         self.description = test_method.description
         self.test_case_steps = {}
-        self.timeout_step_list = []
 
 class TestResult(unittest.TextTestResult):
 
@@ -63,7 +62,6 @@ class TestResult(unittest.TextTestResult):
         super(TestResult,self).startTest(test)
         self.start_time = time.time()
         Var.test_case_steps = {}
-        Var.timeout_step_list = []
         Var.is_debug = False
 
     def stopTest(self, test):
@@ -79,13 +77,11 @@ class TestResult(unittest.TextTestResult):
         self.testinfo.stop_time = self.stop_time
         self.testinfo.report = self.report
         self.testinfo.test_case_steps = Var.test_case_steps
-        self.testinfo.timeout_step_list = Var.timeout_step_list
         if test.module not in self.result.keys():
             self.result[test.module] = []
         self.result[test.module].append(self.testinfo)
         self.testinfo = None
         Var.test_case_steps = {}
-        Var.timeout_step_list = []
         Var.is_debug = False
 
     def addSuccess(self, test):

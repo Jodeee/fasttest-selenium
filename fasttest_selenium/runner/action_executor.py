@@ -8,6 +8,7 @@ from collections import Iterable
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import JavascriptException
 from fasttest_selenium.common import Var, log_info, log_error
+from fasttest_selenium.common.check import check
 from fasttest_selenium.drivers.driver_base import DriverBase
 from fasttest_selenium.utils.opcv_utils import OpencvUtils
 
@@ -183,6 +184,7 @@ class ActionExecutor(object):
         key = self.__get_value(action)
         DriverBase.add_cookie(key)
 
+    @check
     def __action_clear(self, action):
         '''
         clear
@@ -191,6 +193,7 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         DriverBase.clear(element)
 
+    @check
     def __action_submit(self, action):
         '''
         submit
@@ -200,6 +203,7 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         DriverBase.submit(element)
 
+    @check
     def __action_click(self, action):
         '''
         click
@@ -209,6 +213,7 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         DriverBase.click(element)
 
+    @check
     def __action_context_click(self, action):
         '''
         contextClick
@@ -218,6 +223,7 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         DriverBase.context_click(element)
 
+    @check
     def __action_double_click(self, action):
         '''
         doubleClick
@@ -227,6 +233,7 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         DriverBase.double_click(element)
 
+    @check
     def __action_click_and_hold(self, action):
         '''
         holdClick
@@ -236,6 +243,7 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         DriverBase.click_and_hold(element)
 
+    @check
     def __action_drag_and_drop(self, action):
         '''
         dragDrop
@@ -246,6 +254,7 @@ class ActionExecutor(object):
         target = self.__get_element_info(action, 1)
         DriverBase.drag_and_drop(element, target)
 
+    @check
     def __action_drag_and_drop_by_offset(self, action):
         '''
         dragDropByOffset
@@ -267,6 +276,7 @@ class ActionExecutor(object):
         yoffset = self.__get_value(action, 1)
         DriverBase.move_by_offset(float(xoffset), float(yoffset))
 
+    @check
     def __action_move_to_element(self, action):
         '''
         moveToElement
@@ -276,6 +286,7 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         DriverBase.move_to_element(element)
 
+    @check
     def __action_move_to_element_with_offset(self, action):
         '''
         moveToElementWithOffset
@@ -321,6 +332,7 @@ class ActionExecutor(object):
         handle = self.__get_value(action)
         DriverBase.switch_to_window(handle)
 
+    @check
     def __action_send_keys(self, action):
         '''
         sendKeys
@@ -346,6 +358,7 @@ class ActionExecutor(object):
         '''
         self.__get_element_info(action)
 
+    @check
     def __action_save_screenshot(self, action):
         '''
         saveScreenshot
@@ -387,6 +400,7 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         return DriverBase.is_enabled(element)
 
+    @check
     def __action_get_size(self, action):
         '''
         getSize
@@ -396,6 +410,7 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         return DriverBase.get_size(element)
 
+    @check
     def __action_get_attribute(self, action):
         '''
         getAttribute
@@ -406,6 +421,7 @@ class ActionExecutor(object):
         attribute = self.__get_value(action, 1)
         return DriverBase.get_attribute(element, attribute)
 
+    @check
     def __action_get_text(self, action):
         '''
         getText
@@ -415,6 +431,7 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         return DriverBase.get_text(element)
 
+    @check
     def __action_get_tag_name(self, action):
         '''
         getTagName
@@ -424,6 +441,7 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         return DriverBase.get_tag_name(element)
 
+    @check
     def __action_get_css_property(self, action):
         '''
         getCssProperty
@@ -434,6 +452,7 @@ class ActionExecutor(object):
         css_value = self.__get_value(action, 1)
         return DriverBase.get_css_property(element, css_value)
 
+    @check
     def __action_get_location(self, action):
         '''
         getLocation
@@ -443,6 +462,7 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         return DriverBase.get_location(element)
 
+    @check
     def __action_get_rect(self, action):
         '''
         getRect
