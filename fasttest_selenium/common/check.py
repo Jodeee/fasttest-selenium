@@ -16,7 +16,7 @@ def check(func, *args, **kwds):
                     result = func()
                 break
             except WebDriverException as e:
-                log_error(traceback.format_exc(), False)
+                log_error(e.msg, False)
                 index -= 1
                 if index == 0:
                     raise e

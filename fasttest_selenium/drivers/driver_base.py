@@ -9,6 +9,7 @@ from concurrent import futures
 from fasttest_selenium.utils import *
 from fasttest_selenium.common import *
 from selenium.webdriver.common.by import By
+from fasttest_selenium.drivers.driver import wd
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -23,16 +24,9 @@ class DriverBase(object):
         try:
             global driver
             driver = Var.instance
+            wd.driver = driver
         except Exception as e:
             raise e
-
-    @staticmethod
-    def get_driver():
-        '''
-        return driver
-        :return:
-        '''
-        return driver
 
     @staticmethod
     def open_url(url):

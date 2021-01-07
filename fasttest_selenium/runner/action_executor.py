@@ -350,6 +350,7 @@ class ActionExecutor(object):
             raise TypeError('missing 1 required positional argument')
         DriverBase.send_keys(element, text_list)
 
+    @check
     def __action_check(self, action):
         '''
         check
@@ -373,6 +374,7 @@ class ActionExecutor(object):
             name = self.__get_value(action, 1)
         return DriverBase.save_screenshot(element, name)
 
+    @check
     def __action_is_selected(self, action):
         '''
         isSelected
@@ -382,6 +384,7 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         return DriverBase.is_selected(element)
 
+    @check
     def __action_is_displayed(self, action):
         '''
         isDisplayed
@@ -391,6 +394,7 @@ class ActionExecutor(object):
         element = self.__get_element_info(action)
         return DriverBase.is_displayed(element)
 
+    @check
     def __action_is_enabled(self, action):
         '''
         isEnabled
@@ -624,6 +628,7 @@ class ActionExecutor(object):
             raise Exception("Can't find elements: {}".format(parms[0]))
         return elements
 
+    @check
     def __action_ifcheck(self, action):
         """
         行为执行：ifcheck
