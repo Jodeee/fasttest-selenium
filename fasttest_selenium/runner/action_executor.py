@@ -51,7 +51,6 @@ class ActionExecutor(object):
         :return:
         '''
         parms = action.parms
-        step = action.step
         if len(parms) <= index or not len(parms):
             raise TypeError('missing {} required positional argument'.format(index + 1))
         if isinstance(parms[index], WebElement):
@@ -61,7 +60,7 @@ class ActionExecutor(object):
                 raise TypeError('input parameter format error:{}'.format(parms[index]))
             key = parms[index].split('=', 1)[0].strip()
             value = parms[index].split('=', 1)[-1].strip()
-            element = DriverBase.get_element(key, value, Var.timeout, step)
+            element = DriverBase.get_element(key, value, Var.timeout)
         else:
             raise TypeError('the parms type must be: WebElement or str')
 
@@ -358,6 +357,46 @@ class ActionExecutor(object):
         :return:
         '''
         self.__get_element_info(action)
+
+    def __action_query_displayed(self, action):
+        '''
+        queryDisplayed
+        :param action:
+        :return:
+        '''
+        parms = self.__get_value(action)
+        if isinstance(parms, WebElement):
+            element = parms
+            DriverBase.query_displayed(element=element, timeout=Var.timeout)
+        elif isinstance(parms, str):
+            if not re.match(r'^(id|name|class|tag_name|link_text|partial_link_text|xpath|css_selector)\s*=.+',
+                            parms.strip(), re.I):
+                raise TypeError('input parameter format error:{}'.format(parms))
+            key = parms.split('=', 1)[0].strip()
+            value = parms.split('=', 1)[-1].strip()
+            DriverBase.query_displayed(type=key, text=value, timeout=Var.timeout)
+        else:
+            raise TypeError('the parms type must be: WebElement or str')
+
+    def __action_query_not_displayed(self, action):
+        '''
+        queryNotDisplayed
+        :param action:
+        :return:
+        '''
+        parms = self.__get_value(action)
+        if isinstance(parms, WebElement):
+            element = parms
+            DriverBase.query_not_displayed(element=element, timeout=Var.timeout)
+        elif isinstance(parms, str):
+            if not re.match(r'^(id|name|class|tag_name|link_text|partial_link_text|xpath|css_selector)\s*=.+',
+                            parms.strip(), re.I):
+                raise TypeError('input parameter format error:{}'.format(parms))
+            key = parms.split('=', 1)[0].strip()
+            value = parms.split('=', 1)[-1].strip()
+            DriverBase.query_not_displayed(type=key, text=value, timeout=Var.timeout)
+        else:
+            raise TypeError('the parms type must be: WebElement or str')
 
     @check
     def __action_save_screenshot(self, action):
@@ -942,6 +981,12 @@ class ActionExecutor(object):
 
         elif action.key == 'check':
             result = self.__action_check(action)
+
+        elif action.key == 'queryDisplayed':
+            result = self.__action_query_displayed(action)
+
+        elif action.key == 'queryNotDisplayed':
+            result = self.__action_query_not_displayed(action)
 
         elif action.key == 'sleep':
             result = self.__action_sleep(action)

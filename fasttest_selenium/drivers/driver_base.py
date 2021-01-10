@@ -23,8 +23,19 @@ class DriverBase(object):
     def init():
         try:
             global driver
+            global by
             driver = Var.instance
             wd.driver = driver
+            by = Dict({
+                'id': By.ID,
+                'name': By.NAME,
+                'xpath': By.XPATH,
+                'class': By.CLASS_NAME,
+                'tag_name': By.TAG_NAME,
+                'link_text': By.LINK_TEXT,
+                'css_selector': By.CSS_SELECTOR,
+                'partial_link_text': By.PARTIAL_LINK_TEXT,
+            })
         except Exception as e:
             raise e
 
@@ -559,7 +570,59 @@ class DriverBase(object):
         return image_path
 
     @staticmethod
-    def get_element(type, text, timeout=10, step=''):
+    def query_displayed(type='', text='',element='' , timeout=10):
+        '''
+        queryDisplayed
+        :param type:
+        :param text:
+        :return:
+        '''
+        if not timeout:
+            timeout = 10
+        if element:
+            try:
+                WebDriverWait(driver, int(timeout)).until(
+                    EC.visibility_of(element)
+                )
+            except Exception as e:
+                raise e
+        else:
+            try:
+                type = type.lower()
+                WebDriverWait(driver, int(timeout)).until(
+                    EC.visibility_of_element_located((by[type], text))
+                )
+            except Exception as e:
+                raise e
+
+    @staticmethod
+    def query_not_displayed(type='', text='', element='', timeout=10):
+        '''
+        queryNotDisplayed
+        :param type:
+        :param text:
+        :return:
+        '''
+        if not timeout:
+            timeout = 10
+        if element:
+            try:
+                WebDriverWait(driver, int(timeout)).until(
+                    EC.invisibility_of_element(element)
+                )
+            except Exception as e:
+                raise e
+        else:
+            try:
+                type = type.lower()
+                WebDriverWait(driver, int(timeout)).until(
+                    EC.invisibility_of_element_located((by[type], text))
+                )
+            except Exception as e:
+                raise e
+
+    @staticmethod
+    def get_element(type, text, timeout=10):
         '''
         getElement
         :param type:
@@ -567,16 +630,6 @@ class DriverBase(object):
         :return:
         '''
         type = type.lower()
-        by = Dict({
-            'id': By.ID,
-            'name': By.NAME,
-            'xpath': By.XPATH,
-            'class': By.CLASS_NAME,
-            'tag_name': By.TAG_NAME,
-            'link_text': By.LINK_TEXT,
-            'css_selector': By.CSS_SELECTOR,
-            'partial_link_text': By.PARTIAL_LINK_TEXT,
-        })
         if not timeout:
             timeout = 10
         endTime = datetime.datetime.now() + datetime.timedelta(seconds=int(timeout))
@@ -601,7 +654,7 @@ class DriverBase(object):
                 raise e
 
     @staticmethod
-    def get_elements(type, text, timeout=10, step=''):
+    def get_elements(type, text, timeout=10):
         '''
         getElements
         :param type:
@@ -609,18 +662,8 @@ class DriverBase(object):
         :return:
         '''
         type = type.lower()
-        by = Dict({
-            'id': By.ID,
-            'name': By.NAME,
-            'xpath': By.XPATH,
-            'class': By.CLASS_NAME,
-            'tag_name': By.TAG_NAME,
-            'link_text': By.LINK_TEXT,
-            'css_selector': By.CSS_SELECTOR,
-            'partial_link_text': By.PARTIAL_LINK_TEXT,
-        })
         try:
-            element = DriverBase.get_element(type, text, timeout, step)
+            element = DriverBase.get_element(type, text, timeout)
             if not element:
                 return []
             elements = driver.find_elements(by[type], text)

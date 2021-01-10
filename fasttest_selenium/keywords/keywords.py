@@ -10,6 +10,8 @@ def return_keywords():
         "forward", # 前进
         "refresh", # 刷新
         "check",  # 检查元素
+        "queryDisplayed", # 等待元素可见
+        "queryNotDisplayed", # 等待元素不可见
         "click",  # 单击
         "contextClick",  # 右击
         "doubleClick",  # 双击
