@@ -662,7 +662,7 @@ class ActionExecutor(object):
             raise TypeError('input parameter format error:{}'.format(parms[0]))
         key = parms[0].strip().split('=', 1)[0]
         value = parms[0].strip().split('=', 1)[-1]
-        elements = DriverBase.get_elements(key, value, Var.timeout, step)
+        elements = DriverBase.get_elements(key, value, Var.timeout)
         if not elements:
             raise Exception("Can't find elements: {}".format(parms[0]))
         return elements
