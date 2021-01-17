@@ -48,6 +48,15 @@ class TestRunner(unittest.TextTestRunner):
         Var.all_result = result
         fp.close()
 
+        result_path = os.path.join(Var.ROOT, 'result.properties')
+        with open(result_path, "w") as f:
+            f.write(f'report={result.report}\n')
+            f.write(f'total={result.testsRun}\n')
+            f.write(f'successes={len(result.successes)}\n')
+            f.write(f'failures={len(result.failures)}\n')
+            f.write(f'errors={len(result.errors)}\n')
+            f.write(f'skipped={len(result.skipped)}\n')
+
         return result
 
 
