@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
-import cv2
+try:
+    import cv2
+except:
+    pass
 import time
 from fasttest_selenium.common import *
 
