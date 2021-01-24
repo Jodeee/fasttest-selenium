@@ -70,7 +70,7 @@ class DriverBase(object):
 
     @staticmethod
     def createSession():
-        server = ServerUtils(Var.browser, Var.browser_options, Var.maxWindow)
+        server = ServerUtils(Var.start_info)
         Var.instance = server.start_server()
         DriverBase.init()
 

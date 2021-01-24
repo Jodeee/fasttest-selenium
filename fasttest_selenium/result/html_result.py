@@ -152,6 +152,7 @@ class Template_mixin(object):
                     </td>
                 </tr>
     '''
+
     CASE_SNAPSHOT_DIV = r'''
                             <div class="result_css_Stepsdetails">
                                 <div class="result_css_steps" style="display: inline-block">
@@ -163,6 +164,7 @@ class Template_mixin(object):
                                 </div>
                             </div>
     '''
+
     CASE_NOT_SNAPSHOT_DIV = r'''
                             <div class="result_css_Stepsdetails">
                                 <div class="result_css_steps" style="display: inline-block">
@@ -171,6 +173,7 @@ class Template_mixin(object):
                                 </div>
                             </div>
     '''
+
     CASE_ERROR_DIV = r'''
                             <div class="result_css_Stepsdetails">
                                 <div class="result_css_steps" style="display: inline-block">
@@ -183,6 +186,7 @@ class Template_mixin(object):
                                 </div>
                             </div>
     '''
+
     CASE_NOT_ERROR_DIV = r'''
                             <div class="result_css_Stepsdetails">
                                 <div class="result_css_steps" style="display: inline-block">
@@ -196,6 +200,7 @@ class Template_mixin(object):
     '''
 
     DEFAULT_TITLE = 'Unit Test Report'
+
     DEFAULT_DESCRIPTION = ''
 
 class HTMLTestRunner(Template_mixin):
@@ -206,11 +211,9 @@ class HTMLTestRunner(Template_mixin):
         self.title = title if title else self.DEFAULT_TITLE
         self.description = description if description else self.DEFAULT_DESCRIPTION
 
-    def generateReport(self,result,starttime,stoptime):
-        # 获取头部数据
-        report_attrs = self._getReportAttributes(result, starttime, stoptime)
-        report = self._generate_report(result)
-        heading = self._generate_heading(report_attrs)
+    def generate_report(self, result):
+        heading = self.__generate_heading(result)
+        report = self.__generate_tabdiv(result)
         tabdiv = self.TABDIV_TMPL.format(
             trlist = report
         )
@@ -223,18 +226,22 @@ class HTMLTestRunner(Template_mixin):
         shutil.copy(os.path.join(resource,"js.js"), os.path.join(result.report,'resource'))
         self.stream.write(output.encode('utf-8'))
 
-    def _getReportAttributes(self,result,starttime,stoptime):
+    def __generate_heading(self, report):
 
-        startTime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(starttime))
-        duration = str(int(stoptime - starttime)) + 's'
-        Total = result.testsRun
-        Success = len(result.successes)
-        Failure = len(result.failures)
-        Error = len(result.errors)
-        skipped = len(result.skipped)
-        return (Total,Success,Failure,Error,skipped,startTime,duration)
+        if report:
+            heading = self.HEADING_TMPL.format(
+                title = self.title,
+                total = report.total,
+                success = report.successes,
+                failure = report.failures,
+                error = report.errors,
+                skipped = report.skipped,
+                startTime = report.startTime,
+                duration = report.duration
+            )
+            return heading
 
-    def _generate_report(self, result):
+    def __generate_tabdiv(self, result):
         '''
         解析结果
         :param result:
@@ -249,13 +256,13 @@ class HTMLTestRunner(Template_mixin):
             cls_list = []
             for test_info in module_list:
                 # case模块
-                case_module = self._generate_case(test_info)
+                case_module = self.__generate_case(test_info)
                 cls_list.append(case_module)
 
                 # 具体case
                 status = test_info.status
                 if status != 3: # skip
-                    case_deta = self._generate_case_deta(test_info)
+                    case_deta = self.__generate_case_deta(test_info)
                     cls_list.append(case_deta)
 
                 # 统计结果
@@ -286,35 +293,21 @@ class HTMLTestRunner(Template_mixin):
             tr_ = tr_ + tr
         return tr_
 
-    def _generate_heading(self,report_attrs):
 
-        if report_attrs:
-            heading = self.HEADING_TMPL.format(
-                title = self.title,
-                total = report_attrs[0],
-                success = report_attrs[1],
-                failure = report_attrs[2],
-                error = report_attrs[3],
-                skipped = report_attrs[4],
-                startTime = report_attrs[5],
-                duration = report_attrs[6]
-            )
-            return heading
-
-    def _generate_case(self,testinfo):
+    def __generate_case(self, test_info):
         '''
         module 样式
         :param testinfo:
         :return:
         '''
         status_list = ['success', 'failure', 'error', 'skipped']
-        casename = testinfo.casename
-        status = status_list[testinfo.status]
-        description = testinfo.description
-        startTime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(testinfo.start_time))
-        duration = str(int(testinfo.stop_time - testinfo.start_time)) + 's'
-        dataId = testinfo.dataId
-        module_name = testinfo.module_name
+        casename = test_info.caseName
+        status = status_list[test_info.status]
+        description = test_info.description
+        startTime = test_info.startTime
+        duration = test_info.duration
+        dataId = test_info.dataId
+        module_name = test_info.moduleName
 
         caseinfo = self.CASE_TMPL.format(
             module_name=module_name,
@@ -329,19 +322,19 @@ class HTMLTestRunner(Template_mixin):
         )
         return caseinfo
 
-    def _generate_case_deta(self,test_info):
+    def __generate_case_deta(self, test_info):
         '''
         具体case
         :param testinfo:
         :return:
         '''
         dataId = test_info.dataId
-        module_name = test_info.module_name
+        module_name = test_info.moduleName
         err = '\n' + test_info.err if test_info.err else 'Nothing'
         steps = ""
-        if os.path.exists(test_info.snapshot_dir):
-            for key in sorted(test_info.test_case_steps):
-                value = test_info.test_case_steps[key]
+        if os.path.exists(test_info.snapshotDir):
+            for key in sorted(test_info.steps):
+                value = test_info.steps[key]
                 run_time = value['duration']
                 step = value['step'].replace('\n', '')
                 if value['result']:

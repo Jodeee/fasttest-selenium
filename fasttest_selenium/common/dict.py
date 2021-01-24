@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import json
 import collections
 
 
@@ -26,3 +27,14 @@ class Dict(collections.UserDict):
             return self[str(item)]
         else:
             return None
+
+class DictEncoder(json.JSONEncoder):
+
+    def default(self, obj):
+        if isinstance(obj, Dict):
+            d = {}
+            for k, v in obj.items():
+                d[k] = v
+            return d
+        else:
+            return json.JSONEncoder.default(self, obj)

@@ -30,7 +30,7 @@ class Project(object):
 
     def __init_project(self):
 
-        for path in [path  for path in inspect.stack() if str(path[1]).endswith("runtest.py")]:
+        for path in [path  for path in inspect.stack() if str(path[1]).endswith("runtest.py") or str(path[1]).endswith("run.py")]:
             self.__ROOT = os.path.dirname(path[1])
             sys.path.append(self.__ROOT)
             sys.path.append(os.path.join(self.__ROOT, 'Scripts'))
@@ -54,7 +54,12 @@ class Project(object):
             desiredcaps = self.__config['desiredcaps'][0]
             if Var.browser.lower() in desiredcaps.keys():
                 browser_options = Dict(desiredcaps[Var.browser.lower()][0])
-        Var.browser_options = browser_options
+        Var.start_info = Dict({
+            'browser': Var.browser,
+            'options': browser_options,
+            'maxWindow': Var.maxWindow,
+            'remote': Var.remote
+        })
 
 
     def __init_data(self):
@@ -113,7 +118,10 @@ class Project(object):
             log_info(' {}: {}'.format(configK, configV))
         log_info('******************* analytical testcase *******************')
         testcase = TestCaseUtils()
-        self.__testcase = testcase.testcase_path(Var.ROOT, Var.testcase)
+        if Var.testCase:
+            self.__testcase = testcase.testcase_path(Var.ROOT, Var.testCase)
+        else:
+            self.__testcase = testcase.testcase_path(Var.ROOT, Var.testcase)
         log_info(' case: {}'.format(len(self.__testcase)))
         if self.__testcase:
             for case in self.__testcase:
@@ -153,7 +161,7 @@ class Project(object):
 
     def start(self):
         if not Var.isReset:
-            server = ServerUtils(Var.browser, Var.browser_options, Var.maxWindow)
+            server = ServerUtils(Var.start_info)
             Var.instance = server.start_server()
             DriverBase.init()
 
@@ -165,15 +173,13 @@ class Project(object):
             server.stop_server(Var.instance)
 
         if Var.all_result:
-            if Var.all_result.errors:
+            if Var.all_result.errorsList:
                 log_info(' Error case:')
-            for error in Var.all_result.errors:
-                cast_info = error[0]
-                log_error(cast_info.testcase_path, False)
+            for error in Var.all_result.errorsList:
+                log_error(error, False)
 
-            if Var.all_result.failures:
+            if Var.all_result.failuresList:
                 log_info(' Failed case:')
-            for failure in Var.all_result.failures:
-                cast_info = failure[0]
-                log_error(cast_info.testcase_path, False)
+            for failure in Var.all_result.failuresList:
+                log_error(failure, False)
         return Var.all_result

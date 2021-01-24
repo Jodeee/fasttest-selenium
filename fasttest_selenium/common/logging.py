@@ -36,6 +36,7 @@ def log_init(report):
     rh.setFormatter(formatter)
     rh.setLevel(logging.INFO)
     logger.info('init...')
+    logger.info(' report: {}'.format(report))
 
 def log_info(message,color=None):
     try:

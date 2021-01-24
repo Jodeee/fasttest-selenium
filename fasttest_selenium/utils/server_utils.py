@@ -14,68 +14,87 @@ class ServerUtils(object):
         except:
             return None
 
-    def __init__(self, browser, browser_options, max_window):
-        self.browser = browser
+    def __init__(self, start_info):
+        self.browser = start_info.browser.lower()
         self.instance = None
-        self.browser_options = browser_options
-        if max_window is None:
+        self.options =start_info.options
+        if start_info.max_window is None:
             max_window = False
-        self.max_window = max_window
+        self.max_window = start_info.maxWindow
+        self.remote = start_info.remote
 
     def start_server(self):
 
         try:
-            path = None
-            if self.browser_options:
-                if 'driver' in self.browser_options.keys():
-                    path = self.browser_options['driver']
-                    if not os.path.isfile(path):
-                        log_error(' No such file : {}'.format(path), False)
-                        path = None
-            if self.browser.lower() == 'chrome':
+            if self.options and self.options.driver:
+                if os.path.isfile(self.options.driver):
+                    self.driver_path = self.options.driver
+                else:
+                    self.driver_path = None
+                    log_error(' No such file : {}'.format(self.options.driver), False)
+            else:
+                self.driver_path = None
+
+            if self.browser == 'chrome':
                 options = webdriver.ChromeOptions()
-                if self.browser_options:
-                    if 'options' in self.browser_options.keys():
-                        if self.browser_options['options']:
-                            for opt in self.browser_options['options']:
-                                options.add_argument(opt)
-                if path:
-                    self.instance = webdriver.Chrome(executable_path=path,
+                if self.options and self.options.options:
+                    for opt in self.options.options:
+                        options.add_argument(opt)
+                if self.remote:
+                    self.instance = webdriver.Remote(command_executor=self.remote,
+                                                     desired_capabilities={
+                                                         'platform': 'ANY',
+                                                         'browserName': self.browser,
+                                                         'version': '',
+                                                         'javascriptEnabled': True
+                                                     },
+                                                     options=options)
+                else:
+                    if self.driver_path:
+                        self.instance = webdriver.Chrome(executable_path=self.driver_path,
                                                      chrome_options=options)
-                else:
-                    self.instance = webdriver.Chrome(chrome_options=options)
-            elif self.browser.lower() == 'firefox':
+                    else:
+                        self.instance = webdriver.Chrome(chrome_options=options)
+            elif self.browser == 'firefox':
                 options = webdriver.FirefoxOptions()
-                if self.browser_options:
-                    if 'options' in self.browser_options.keys():
-                        if self.browser_options['options']:
-                            for opt in self.browser_options['options']:
-                                options.add_argument(opt)
-                if path:
-                    self.instance = webdriver.Firefox(executable_path=path,
-                                                      firefox_options=options)
+                if self.options and self.options.options:
+                    for opt in self.options.options:
+                        options.add_argument(opt)
+                if self.remote:
+                    self.instance = webdriver.Remote(command_executor=self.remote,
+                                                     desired_capabilities={
+                                                         'platform': 'ANY',
+                                                         'browserName': self.browser,
+                                                         'version': '',
+                                                         'javascriptEnabled': True
+                                                     },
+                                                     options=options)
                 else:
-                    self.instance = webdriver.Firefox(firefox_options=options)
-            elif self.browser.lower() == 'edge':
-                if path:
-                    self.instance = webdriver.Edge(executable_path=path)
+                    if self.driver_path:
+                        self.instance = webdriver.Firefox(executable_path=self.driver_path,
+                                                        firefox_options=options)
+                    else:
+                        self.instance = webdriver.Firefox(firefox_options=options)
+            elif self.browser == 'edge':
+                if self.driver_path:
+                    self.instance = webdriver.Edge(executable_path=self.driver_path)
                 else:
                     self.instance = webdriver.Edge()
-            elif self.browser.lower() == 'safari':
+            elif self.browser == 'safari':
                 self.instance = webdriver.Safari()
-            elif self.browser.lower() == 'ie':
-                if path:
-                    self.instance = webdriver.Ie(executable_path=path)
+            elif self.browser == 'ie':
+                if self.driver_path:
+                    self.instance = webdriver.Ie(executable_path=self.driver_path)
                 else:
                     self.instance = webdriver.Ie()
-            elif self.browser.lower() == 'opera':
-                if path:
-                    self.instance = webdriver.Opera(executable_path=path)
+            elif self.browser == 'opera':
+                if self.driver_path:
+                    self.instance = webdriver.Opera(executable_path=self.driver_path)
                 else:
                     self.instance = webdriver.Opera()
-            elif self.browser.lower() == 'phantomjs':
-                if path:
-                    self.instance = webdriver.PhantomJS(executable_path=path)
+            elif self.browser == 'phantomjs':
+                if self.driver_path:
+                    self.instance = webdriver.PhantomJS(executable_path=self.driver_path)
                 else:
                     self.instance = webdriver.PhantomJS()
 
