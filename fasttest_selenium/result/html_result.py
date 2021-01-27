@@ -333,11 +333,11 @@ class HTMLTestRunner(Template_mixin):
         err = '\n' + test_info.err if test_info.err else 'Nothing'
         steps = ""
         if os.path.exists(test_info.snapshotDir):
-            for key in sorted(test_info.steps):
+            for key in sort_string(test_info.steps):
                 value = test_info.steps[key]
                 run_time = value['duration']
                 step = value['step'].replace('\n', '')
-                if value['result']:
+                if value['result'] != '':
                     step = '{} --> {}'.format(value['step'], value['result']).replace('\n', '')
                 image_path = value['snapshot'].split(test_info.report)[-1]
                 image_path = image_path.lstrip(os.sep)

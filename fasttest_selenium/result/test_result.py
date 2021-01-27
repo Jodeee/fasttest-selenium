@@ -103,6 +103,7 @@ class TestResult(unittest.TextTestResult):
         self._save_output_data()
         _exc_str = self._exc_info_to_string(err, test)
         self.testinfo = TestInfo(test, TestInfo.ERROR, _exc_str)
+        log_error(' case: {}'.format(self.testinfo.case_path), False)
         log_error(_exc_str, False)
 
     def addFailure(self, test, err):
@@ -114,6 +115,7 @@ class TestResult(unittest.TextTestResult):
         self._save_output_data()
         _exc_str = self._exc_info_to_string(err, test)
         self.testinfo = TestInfo(test, TestInfo.FAILURE, _exc_str)
+        log_error(' case: {}'.format(self.testinfo.case_path), False)
         log_error(_exc_str, False)
 
     def addSkip(self, test, reason):
@@ -135,5 +137,6 @@ class TestResult(unittest.TextTestResult):
         self._save_output_data()
         _exc_str = self._exc_info_to_string(err, test)
         self.testinfo = TestInfo(test, TestInfo.FAILURE, _exc_str)
+        log_error(' case: {}'.format(self.testinfo.case_path), False)
         log_error(_exc_str, False)
 

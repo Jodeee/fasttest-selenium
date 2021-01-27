@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import json
 import collections
-
+from selenium.webdriver.remote.webelement import WebElement
 
 class Dict(collections.UserDict):
     def __missing__(self, key):
@@ -36,5 +36,7 @@ class DictEncoder(json.JSONEncoder):
             for k, v in obj.items():
                 d[k] = v
             return d
+        elif isinstance(obj, WebElement):
+            return str(obj)
         else:
             return json.JSONEncoder.default(self, obj)
