@@ -9,7 +9,6 @@ from concurrent import futures
 from fasttest_selenium.utils import *
 from fasttest_selenium.common import *
 from selenium.webdriver.common.by import By
-from fasttest_selenium.drivers.driver import wd
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -22,10 +21,7 @@ class DriverBase(object):
     @staticmethod
     def init():
         try:
-            global driver
             global by
-            driver = Var.instance
-            wd.driver = driver
             by = Dict({
                 'id': By.ID,
                 'name': By.NAME,
@@ -47,17 +43,17 @@ class DriverBase(object):
         :return:
         '''
         try:
-            driver.get(url)
+            Var.instance.get(url)
         except NoSuchWindowException:
             handles = DriverBase.get_window_handles()
             # 如果浏览器未关闭打开新窗口触发该异常，提示用户切换窗口
             if handles:
                 raise NoSuchWindowException('no such window, execute the switchToWindow method to switch the window')
             DriverBase.createSession()
-            driver.get(url)
+            Var.instance.get(url)
         except InvalidSessionIdException:
             DriverBase.createSession()
-            driver.get(url)
+            Var.instance.get(url)
 
     @staticmethod
     def close():
@@ -66,7 +62,7 @@ class DriverBase(object):
         :param:
         :return:
         '''
-        driver.close()
+        Var.instance.close()
 
     @staticmethod
     def createSession():
@@ -81,7 +77,7 @@ class DriverBase(object):
         :param:
         :return:
         '''
-        driver.quit()
+        Var.instance.quit()
 
     @staticmethod
     def back():
@@ -90,7 +86,7 @@ class DriverBase(object):
         :param
         :return:
         '''
-        driver.back()
+        Var.instance.back()
 
     @staticmethod
     def forward():
@@ -99,7 +95,7 @@ class DriverBase(object):
         :param
         :return:
         '''
-        driver.forward()
+        Var.instance.forward()
 
     @staticmethod
     def refresh():
@@ -108,7 +104,7 @@ class DriverBase(object):
         :param
         :return:
         '''
-        driver.refresh()
+        Var.instance.refresh()
 
     @staticmethod
     def maximize_window():
@@ -117,7 +113,7 @@ class DriverBase(object):
         :param:
         :return:
         '''
-        driver.maximize_window()
+        Var.instance.maximize_window()
 
     @staticmethod
     def minimize_window():
@@ -126,7 +122,7 @@ class DriverBase(object):
         :param:
         :return:
         '''
-        driver.minimize_window()
+        Var.instance.minimize_window()
 
     @staticmethod
     def fullscreen_window():
@@ -135,7 +131,7 @@ class DriverBase(object):
         :param:
         :return:
         '''
-        driver.fullscreen_window()
+        Var.instance.fullscreen_window()
 
     @staticmethod
     def delete_all_cookies():
@@ -144,7 +140,7 @@ class DriverBase(object):
         :param:
         :return:
         '''
-        driver.delete_all_cookies()
+        Var.instance.delete_all_cookies()
 
     @staticmethod
     def delete_cookie(name):
@@ -153,7 +149,7 @@ class DriverBase(object):
         :param name
         :return:
         '''
-        driver.delete_cookie(name)
+        Var.instance.delete_cookie(name)
 
     @staticmethod
     def add_cookie(cookie_dict):
@@ -162,7 +158,7 @@ class DriverBase(object):
         :param cookie_dict
         :return:
         '''
-        driver.add_cookie(cookie_dict)
+        Var.instance.add_cookie(cookie_dict)
 
     @staticmethod
     def submit(element):
@@ -199,7 +195,7 @@ class DriverBase(object):
         :param: element
         :return:
         '''
-        ActionChains(driver).context_click(element).perform()
+        ActionChains(Var.instance).context_click(element).perform()
 
     @staticmethod
     def double_click(element):
@@ -208,7 +204,7 @@ class DriverBase(object):
         :param: element
         :return:
         '''
-        ActionChains(driver).double_click(element).perform()
+        ActionChains(Var.instance).double_click(element).perform()
 
     @staticmethod
     def click_and_hold(element):
@@ -217,7 +213,7 @@ class DriverBase(object):
         :param: element
         :return:
         '''
-        ActionChains(driver).click_and_hold(element).perform()
+        ActionChains(Var.instance).click_and_hold(element).perform()
 
     @staticmethod
     def drag_and_drop(element, target):
@@ -227,7 +223,7 @@ class DriverBase(object):
         :param target:鼠标释放的目标元素
         :return:
         '''
-        ActionChains(driver).drag_and_drop(element, target).perform()
+        ActionChains(Var.instance).drag_and_drop(element, target).perform()
 
     @staticmethod
     def drag_and_drop_by_offse(element, xoffset, yoffset):
@@ -238,7 +234,7 @@ class DriverBase(object):
         :param yoffset:
         :return:
         '''
-        ActionChains(driver).drag_and_drop_by_offset(element, xoffset, yoffset).perform()
+        ActionChains(Var.instance).drag_and_drop_by_offset(element, xoffset, yoffset).perform()
 
     @staticmethod
     def move_by_offset(xoffset, yoffset):
@@ -248,7 +244,7 @@ class DriverBase(object):
         :param yoffset:
         :return:
         '''
-        ActionChains(driver).move_by_offset(xoffset, yoffset).perform()
+        ActionChains(Var.instance).move_by_offset(xoffset, yoffset).perform()
 
     @staticmethod
     def move_to_element(element):
@@ -257,7 +253,7 @@ class DriverBase(object):
         :param element
         :return:
         '''
-        ActionChains(driver).move_to_element(element).perform()
+        ActionChains(Var.instance).move_to_element(element).perform()
 
     @staticmethod
     def move_to_element_with_offset(element, xoffset, yoffset):
@@ -268,7 +264,7 @@ class DriverBase(object):
         :param yoffset:
         :return:
         '''
-        ActionChains(driver).move_to_element_with_offset(element, xoffset, yoffset).perform()
+        ActionChains(Var.instance).move_to_element_with_offset(element, xoffset, yoffset).perform()
 
     @staticmethod
     def key_down_and_key_up(value):
@@ -279,7 +275,7 @@ class DriverBase(object):
         :return:
         '''
         try:
-            action = 'ActionChains(driver)'
+            action = 'ActionChains(Var.instance)'
             for k, v in value.items():
                 if k.lower() == 'keydown':
                     for k_down in v:
@@ -303,7 +299,7 @@ class DriverBase(object):
         :param value:
         :return:
         '''
-        ActionChains(driver).key_up(value, element).perform()
+        ActionChains(Var.instance).key_up(value, element).perform()
 
     @staticmethod
     def switch_to_frame(frame_reference):
@@ -312,7 +308,7 @@ class DriverBase(object):
         :param frame_reference:
         :return:
         '''
-        driver.switch_to.frame(frame_reference)
+        Var.instance.switch_to.frame(frame_reference)
 
     @staticmethod
     def switch_to_default_content():
@@ -320,7 +316,7 @@ class DriverBase(object):
         switchToDefaultContent
         :return:
         '''
-        driver.switch_to.default_content()
+        Var.instance.switch_to.default_content()
 
     @staticmethod
     def switch_to_parent_frame():
@@ -328,7 +324,7 @@ class DriverBase(object):
         switchToParentFrame
         :return:
         '''
-        driver.switch_to.parent_frame()
+        Var.instance.switch_to.parent_frame()
 
     @staticmethod
     def switch_to_window(handle):
@@ -336,7 +332,7 @@ class DriverBase(object):
         switchToWindow
         :return:
         '''
-        driver.switch_to.window(handle)
+        Var.instance.switch_to.window(handle)
 
     @staticmethod
     def execute_script(js):
@@ -344,7 +340,7 @@ class DriverBase(object):
         executeScript
         :return:
         '''
-        return driver.execute_script(js)
+        return Var.instance.execute_script(js)
 
     @staticmethod
     def send_keys(element, text):
@@ -467,7 +463,7 @@ class DriverBase(object):
         getName
         :return:
         '''
-        return driver.name
+        return Var.instance.name
 
     @staticmethod
     def get_title():
@@ -475,7 +471,7 @@ class DriverBase(object):
         getTitle
         :return:
         '''
-        return driver.title
+        return Var.instance.title
 
     @staticmethod
     def get_current_url():
@@ -483,7 +479,7 @@ class DriverBase(object):
         getCurrentUrl
         :return:
         '''
-        return driver.current_url
+        return Var.instance.current_url
 
     @staticmethod
     def get_current_window_handle():
@@ -491,7 +487,7 @@ class DriverBase(object):
         getCurrentWindowHandle
         :return:
         '''
-        return driver.current_window_handle
+        return Var.instance.current_window_handle
 
     @staticmethod
     def get_window_handles():
@@ -499,7 +495,7 @@ class DriverBase(object):
         getWindowHandles
         :return:
         '''
-        return driver.window_handles
+        return Var.instance.window_handles
 
     @staticmethod
     def get_cookies():
@@ -507,7 +503,7 @@ class DriverBase(object):
         getCookies
         :return:
         '''
-        return driver.get_cookies()
+        return Var.instance.get_cookies()
 
     @staticmethod
     def get_cookie(name):
@@ -516,7 +512,7 @@ class DriverBase(object):
         :param name
         :return:
         '''
-        return driver.get_cookie(name)
+        return Var.instance.get_cookie(name)
 
     @staticmethod
     def get_window_position():
@@ -524,7 +520,7 @@ class DriverBase(object):
         getWindowPosition
         :return:
         '''
-        return driver.get_window_position()
+        return Var.instance.get_window_position()
 
     @staticmethod
     def set_window_position(x, y):
@@ -532,7 +528,7 @@ class DriverBase(object):
         setWindowPosition
         :return:
         '''
-        return driver.set_window_position(x, y)
+        return Var.instance.set_window_position(x, y)
 
     @staticmethod
     def get_window_size():
@@ -540,7 +536,7 @@ class DriverBase(object):
         getWindowSize
         :return:
         '''
-        return driver.get_window_size()
+        return Var.instance.get_window_size()
 
     @staticmethod
     def set_window_size(width, height):
@@ -548,7 +544,7 @@ class DriverBase(object):
         setWindowSize
         :return:
         '''
-        return driver.set_window_size(width, height)
+        return Var.instance.set_window_size(width, height)
 
     @staticmethod
     def save_screenshot(element, name):
@@ -564,7 +560,7 @@ class DriverBase(object):
             if element:
                 element.screenshot(image_path)
             else:
-                driver.save_screenshot(image_path)
+                Var.instance.save_screenshot(image_path)
         except Exception as e:
             raise e
         return image_path
@@ -581,7 +577,7 @@ class DriverBase(object):
             timeout = 10
         if element:
             try:
-                WebDriverWait(driver, int(timeout)).until(
+                WebDriverWait(Var.instance, int(timeout)).until(
                     EC.visibility_of(element)
                 )
             except Exception as e:
@@ -589,7 +585,7 @@ class DriverBase(object):
         else:
             try:
                 type = type.lower()
-                WebDriverWait(driver, int(timeout)).until(
+                WebDriverWait(Var.instance, int(timeout)).until(
                     EC.visibility_of_element_located((by[type], text))
                 )
             except Exception as e:
@@ -607,7 +603,7 @@ class DriverBase(object):
             timeout = 10
         if element:
             try:
-                WebDriverWait(driver, int(timeout)).until(
+                WebDriverWait(Var.instance, int(timeout)).until(
                     EC.invisibility_of_element(element)
                 )
             except Exception as e:
@@ -615,7 +611,7 @@ class DriverBase(object):
         else:
             try:
                 type = type.lower()
-                WebDriverWait(driver, int(timeout)).until(
+                WebDriverWait(Var.instance, int(timeout)).until(
                     EC.invisibility_of_element_located((by[type], text))
                 )
             except Exception as e:
@@ -636,7 +632,7 @@ class DriverBase(object):
         index = 3
         while True:
             try:
-                element = driver.find_element(by[type], text)
+                element = Var.instance.find_element(by[type], text)
                 if element.is_enabled():
                     return element
                 elif element.is_displayed():
@@ -666,7 +662,7 @@ class DriverBase(object):
             element = DriverBase.get_element(type, text, timeout)
             if not element:
                 return []
-            elements = driver.find_elements(by[type], text)
+            elements = Var.instance.find_elements(by[type], text)
             return elements
         except NoSuchElementException:
             return []

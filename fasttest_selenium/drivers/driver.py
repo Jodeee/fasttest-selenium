@@ -4,14 +4,17 @@ from fasttest_selenium.common import Var
 
 class WebDriver(object):
 
-    def __getattr__(self, item):
+    def __init__(self):
+        self.driver = None
+
+    def __getattribute__(self, item):
         try:
-            return self.__getattribute__(item)
+            if item == 'driver':
+                self.driver = Var.instanc
+                return Var.instance
+            else:
+                return None
         except:
             return None
-
-    def __setattr__(self, key, value):
-        object.__setattr__(self, key, value)
-
 
 wd = WebDriver()

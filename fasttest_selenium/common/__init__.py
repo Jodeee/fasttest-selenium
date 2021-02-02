@@ -2,6 +2,6 @@
 # -*- coding: utf-8 -*-
 from fasttest_selenium.common.dict import Dict, DictEncoder
 from fasttest_selenium.common.variable_global import Var
-from fasttest_selenium.common.logging import log_info, log_error
+from fasttest_selenium.common.log import log_info, log_error
 
 __all__ = ['log_info','log_error','Var', 'Dict', 'DictEncoder']

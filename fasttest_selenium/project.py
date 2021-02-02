@@ -109,7 +109,6 @@ class Project(object):
         if not os.path.exists(Var.report):
             os.makedirs(Var.report)
             os.makedirs(os.path.join(Var.report, 'resource'))
-        log_init(Var.report)
 
     def __analytical_testcase_file(self):
 
