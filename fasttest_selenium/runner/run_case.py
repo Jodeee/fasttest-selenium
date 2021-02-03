@@ -17,5 +17,8 @@ class RunCase(TestCase):
         case.iteration(self.steps)
 
     def tearDown(self):
-        if Var.isReset:
-            DriverBase.quit()
+        try:
+            if Var.isReset:
+                DriverBase.quit()
+        except:
+            pass

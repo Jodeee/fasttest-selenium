@@ -108,6 +108,6 @@ class ServerUtils(object):
 
         try:
             instance.quit()
-        except Exception as e:
-            raise e
+        except:
+            pass
 
