@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import math
 import time
 import json
 import inspect
 import unittest
+import threading
 from fasttest_selenium.common import *
 from fasttest_selenium.utils import *
 from fasttest_selenium.keywords import keywords
@@ -16,8 +18,11 @@ from fasttest_selenium.result.test_runner import TestRunner
 
 class Project(object):
 
-    def __init__(self):
+    def __init__(self, index=0, workers=1, remote=None):
 
+        self.__index = index
+        self.__workers = workers
+        self.__remote = remote
         self.__init_project()
         self.__init_config()
         self.__init_logging()
@@ -58,7 +63,7 @@ class Project(object):
             'browser': Var.browser,
             'options': browser_options,
             'maxWindow': Var.maxWindow,
-            'remote': Var.remote
+            'remote': self.__remote
         })
 
 
@@ -102,8 +107,9 @@ class Project(object):
 
     def __init_logging(self):
 
+        name = threading.currentThread().getName()
         report_time = time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
-        report_child = "{}_{}".format(Var.browser, report_time)
+        report_child = "{}_{}_{}".format(Var.browser, report_time, name)
         Var.report = os.path.join(Var.ROOT, "Report", report_child)
 
         if not os.path.exists(Var.report):
@@ -150,7 +156,13 @@ class Project(object):
     def __init_testcase_suite(self):
 
         self.__suite = []
-        for case_path in self.__testcase:
+        testcase = self.__testcase
+        if self.__workers > 1:
+            i = self.__index
+            n = self.__workers
+            l = len(self.__testcase)
+            testcase = self.__testcase[math.floor(i / n * l):math.floor((i + 1) / n * l)]
+        for case_path in testcase:
             testcase = analytical_file(case_path)
             testcase['testcase_path'] = case_path
             Var.testcase = testcase
